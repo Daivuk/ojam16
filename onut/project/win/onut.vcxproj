@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\list\List.h" />
+    <ClInclude Include="..\..\include\micropather\micropather.h" />
+    <ClInclude Include="..\..\include\onut\ActionManager.h" />
+    <ClInclude Include="..\..\include\onut\Anim.h" />
+    <ClInclude Include="..\..\include\onut\Async.h" />
+    <ClInclude Include="..\..\include\onut\BlendMode.h" />
+    <ClInclude Include="..\..\include\onut\Cloud.h" />
+    <ClInclude Include="..\..\include\onut\Crypto.h" />
+    <ClInclude Include="..\..\include\onut\Dialogs.h" />
+    <ClInclude Include="..\..\include\onut\Dispatcher.h" />
+    <ClInclude Include="..\..\include\onut\Files.h" />
+    <ClInclude Include="..\..\include\onut\Font.h" />
+    <ClInclude Include="..\..\include\onut\GamePad.h" />
+    <ClInclude Include="..\..\include\onut\Http.h" />
+    <ClInclude Include="..\..\include\onut\Curve.h" />
+    <ClInclude Include="..\..\include\onut\Images.h" />
+    <ClInclude Include="..\..\include\onut\IndexBuffer.h" />
+    <ClInclude Include="..\..\include\onut\Input.h" />
+    <ClInclude Include="..\..\include\onut\Log.h" />
+    <ClInclude Include="..\..\include\onut\Music.h" />
+    <ClInclude Include="..\..\include\onut\onut.h" />
+    <ClInclude Include="..\..\include\onut\ParticleSystem.h" />
+    <ClInclude Include="..\..\include\onut\ParticleSystemManager.h" />
+    <ClInclude Include="..\..\include\onut\Point.h" />
+    <ClInclude Include="..\..\include\onut\Pool.h" />
+    <ClInclude Include="..\..\include\onut\PrimitiveBatch.h" />
+    <ClInclude Include="..\..\include\onut\Random.h" />
+    <ClInclude Include="..\..\include\onut\Renderer.h" />
+    <ClInclude Include="..\..\include\onut\RTS.h" />
+    <ClInclude Include="..\..\include\onut\SampleMode.h" />
+    <ClInclude Include="..\..\include\onut\Settings.h" />
+    <ClInclude Include="..\..\include\onut\Shader.h" />
+    <ClInclude Include="..\..\include\onut\Sound.h" />
+    <ClInclude Include="..\..\include\onut\SpriteAnim.h" />
+    <ClInclude Include="..\..\include\onut\SpriteBatch.h" />
+    <ClInclude Include="..\..\include\onut\Strings.h" />
+    <ClInclude Include="..\..\include\onut\ThreadPool.h" />
+    <ClInclude Include="..\..\include\onut\TiledMap.h" />
+    <ClInclude Include="..\..\include\onut\PrimitiveMode.h" />
+    <ClInclude Include="..\..\include\onut\Timing.h" />
+    <ClInclude Include="..\..\include\onut\Timer.h" />
+    <ClInclude Include="..\..\include\onut\Tween.h" />
+    <ClInclude Include="..\..\include\onut\UIButton.h" />
+    <ClInclude Include="..\..\include\onut\UICheckBox.h" />
+    <ClInclude Include="..\..\include\onut\UIComponents.h" />
+    <ClInclude Include="..\..\include\onut\UIContext.h" />
+    <ClInclude Include="..\..\include\onut\UIControl.h" />
+    <ClInclude Include="..\..\include\onut\UIEvents.h" />
+    <ClInclude Include="..\..\include\onut\UIImage.h" />
+    <ClInclude Include="..\..\include\onut\UILabel.h" />
+    <ClInclude Include="..\..\include\onut\UIPanel.h" />
+    <ClInclude Include="..\..\include\onut\UITextBox.h" />
+    <ClInclude Include="..\..\include\onut\UITreeView.h" />
+    <ClInclude Include="..\..\include\onut\Updater.h" />
+    <ClInclude Include="..\..\include\onut\VertexBuffer.h" />
+    <ClInclude Include="..\..\include\onut\VideoPlayer.h" />
+    <ClInclude Include="..\..\include\onut\Window.h" />
+    <ClInclude Include="..\..\include\onut\ContentManager.h" />
+    <ClInclude Include="..\..\include\onut\ForwardDeclaration.h" />
+    <ClInclude Include="..\..\include\onut\Maths.h" />
+    <ClInclude Include="..\..\include\onut\Resource.h" />
+    <ClInclude Include="..\..\include\onut\Texture.h" />
+    <ClInclude Include="..\..\include\rapidjson\document.h" />
+    <ClInclude Include="..\..\include\rapidjson\filestream.h" />
+    <ClInclude Include="..\..\include\rapidjson\filewritestream.h" />
+    <ClInclude Include="..\..\include\rapidjson\internal\pow10.h" />
+    <ClInclude Include="..\..\include\rapidjson\internal\stack.h" />
+    <ClInclude Include="..\..\include\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="..\..\include\rapidjson\prettywriter.h" />
+    <ClInclude Include="..\..\include\rapidjson\rapidjson.h" />
+    <ClInclude Include="..\..\include\rapidjson\reader.h" />
+    <ClInclude Include="..\..\include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="..\..\include\rapidjson\writer.h" />
+    <ClInclude Include="..\..\include\simplemath\SimpleMath.h" />
+    <ClInclude Include="..\..\include\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="..\..\src\audio\Audio.h" />
+    <ClInclude Include="..\..\src\audio\pch.h" />
+    <ClInclude Include="..\..\src\audio\SoundCommon.h" />
+    <ClInclude Include="..\..\src\audio\WaveBankReader.h" />
+    <ClInclude Include="..\..\src\audio\WAVFileReader.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudAsyncMatch.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudAuthentication.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudClient.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudDataStream.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudEntity.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudEvent.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudFile.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudFriend.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGamification.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalApp.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalEntity.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalStatistics.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudIdentity.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudMatchmaking.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudOneWayMatch.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlaybackStream.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerState.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerStatistics.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerStatisticsEvent.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudProduct.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudProfanity.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPushNotification.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudRedemptionCode.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudS3Handling.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudScript.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudSocialLeaderboard.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudSteam.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTime.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTwitter.h" />
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTypes.h" />
+    <ClInclude Include="..\..\src\braincloud\http_codes.h" />
+    <ClInclude Include="..\..\src\braincloud\IBrainCloudComms.h" />
+    <ClInclude Include="..\..\src\braincloud\IEventCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\IFileUploadCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\IGlobalErrorCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\INetworkErrorCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\IRewardCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\IServerCallback.h" />
+    <ClInclude Include="..\..\src\braincloud\OperationParam.h" />
+    <ClInclude Include="..\..\src\braincloud\Platform.h" />
+    <ClInclude Include="..\..\src\braincloud\reason_codes.h" />
+    <ClInclude Include="..\..\src\braincloud\ServerCall.h" />
+    <ClInclude Include="..\..\src\braincloud\ServiceName.h" />
+    <ClInclude Include="..\..\src\braincloud\ServiceOperation.h" />
+    <ClInclude Include="..\..\src\CloudBrainCloud.h" />
+    <ClInclude Include="..\..\src\dirent\dirent.h" />
+    <ClInclude Include="..\..\src\IndexBufferD3D11.h" />
+    <ClInclude Include="..\..\src\jsoncpp\json\json-forwards.h" />
+    <ClInclude Include="..\..\src\jsoncpp\json\json.h" />
+    <ClInclude Include="..\..\src\LodePNG\LodePNG.h" />
+    <ClInclude Include="..\..\src\MFPlayer.h" />
+    <ClInclude Include="..\..\src\InputDevice.h" />
+    <ClInclude Include="..\..\src\mp3\Mp3.h" />
+    <ClInclude Include="..\..\src\Particle.h" />
+    <ClInclude Include="..\..\src\ParticleEmitter.h" />
+    <ClInclude Include="..\..\src\RendererD3D11.h" />
+    <ClInclude Include="..\..\src\ShaderD3D11.h" />
+    <ClInclude Include="..\..\src\TextureD3D11.h" />
+    <ClInclude Include="..\..\src\UIJson.h" />
+    <ClInclude Include="..\..\src\VertexBufferD3D11.h" />
+    <ClInclude Include="..\..\src\zlib\crc32.h" />
+    <ClInclude Include="..\..\src\zlib\deflate.h" />
+    <ClInclude Include="..\..\src\zlib\gzguts.h" />
+    <ClInclude Include="..\..\src\zlib\inffast.h" />
+    <ClInclude Include="..\..\src\zlib\inffixed.h" />
+    <ClInclude Include="..\..\src\zlib\inflate.h" />
+    <ClInclude Include="..\..\src\zlib\inftrees.h" />
+    <ClInclude Include="..\..\src\zlib\trees.h" />
+    <ClInclude Include="..\..\src\zlib\zconf.h" />
+    <ClInclude Include="..\..\src\zlib\zlib.h" />
+    <ClInclude Include="..\..\src\zlib\zutil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\ActionManager.cpp" />
+    <ClCompile Include="..\..\src\audio\AudioEngine.cpp" />
+    <ClCompile Include="..\..\src\audio\DynamicSoundEffectInstance.cpp" />
+    <ClCompile Include="..\..\src\audio\SoundCommon.cpp" />
+    <ClCompile Include="..\..\src\audio\SoundEffect.cpp" />
+    <ClCompile Include="..\..\src\audio\SoundEffectInstance.cpp" />
+    <ClCompile Include="..\..\src\audio\WaveBank.cpp" />
+    <ClCompile Include="..\..\src\audio\WaveBankReader.cpp" />
+    <ClCompile Include="..\..\src\audio\WAVFileReader.cpp" />
+    <ClCompile Include="..\..\src\Cloud.cpp" />
+    <ClCompile Include="..\..\src\CloudBrainCloud.cpp" />
+    <ClCompile Include="..\..\src\ContentManager.cpp" />
+    <ClCompile Include="..\..\src\Crypto.cpp" />
+    <ClCompile Include="..\..\src\Dialogs.cpp" />
+    <ClCompile Include="..\..\src\Dispatcher.cpp" />
+    <ClCompile Include="..\..\src\Files.cpp" />
+    <ClCompile Include="..\..\src\Font.cpp" />
+    <ClCompile Include="..\..\src\GamePad.cpp" />
+    <ClCompile Include="..\..\src\Http.cpp" />
+    <ClCompile Include="..\..\src\Images.cpp" />
+    <ClCompile Include="..\..\src\IndexBuffer.cpp" />
+    <ClCompile Include="..\..\src\IndexBufferD3D11.cpp" />
+    <ClCompile Include="..\..\src\Input.cpp" />
+    <ClCompile Include="..\..\src\InputDevice.cpp" />
+    <ClCompile Include="..\..\src\Curve.cpp" />
+    <ClCompile Include="..\..\src\LodePNG\LodePNG.cpp" />
+    <ClCompile Include="..\..\src\Log.cpp" />
+    <ClCompile Include="..\..\src\MFPlayer.cpp" />
+    <ClCompile Include="..\..\src\micropather.cpp" />
+    <ClCompile Include="..\..\src\mp3\Mp3.cpp" />
+    <ClCompile Include="..\..\src\Music.cpp" />
+    <ClCompile Include="..\..\src\Particle.cpp" />
+    <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="..\..\src\ParticleSystem.cpp" />
+    <ClCompile Include="..\..\src\ParticleSystemManager.cpp" />
+    <ClCompile Include="..\..\src\Pool.cpp" />
+    <ClCompile Include="..\..\src\RendererD3D11.cpp" />
+    <ClCompile Include="..\..\src\Shader.cpp" />
+    <ClCompile Include="..\..\src\ShaderD3D11.cpp" />
+    <ClCompile Include="..\..\src\simplemath\SimpleMath.cpp" />
+    <ClCompile Include="..\..\src\Strings.cpp" />
+    <ClCompile Include="..\..\src\TextureD3D11.cpp" />
+    <ClCompile Include="..\..\src\ThreadPool.cpp" />
+    <ClCompile Include="..\..\src\Timing.cpp" />
+    <ClCompile Include="..\..\src\Timer.cpp" />
+    <ClCompile Include="..\..\src\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\..\src\Tween.cpp" />
+    <ClCompile Include="..\..\src\UIButton.cpp" />
+    <ClCompile Include="..\..\src\UICheckBox.cpp" />
+    <ClCompile Include="..\..\src\UIContext.cpp" />
+    <ClCompile Include="..\..\src\UIControl.cpp" />
+    <ClCompile Include="..\..\src\UIImage.cpp" />
+    <ClCompile Include="..\..\src\UIJson.cpp" />
+    <ClCompile Include="..\..\src\UILabel.cpp" />
+    <ClCompile Include="..\..\src\UIPanel.cpp" />
+    <ClCompile Include="..\..\src\UITextBox.cpp" />
+    <ClCompile Include="..\..\src\UITreeView.cpp" />
+    <ClCompile Include="..\..\src\Updater.cpp" />
+    <ClCompile Include="..\..\src\VertexBuffer.cpp" />
+    <ClCompile Include="..\..\src\VertexBufferD3D11.cpp" />
+    <ClCompile Include="..\..\src\VideoPlayer.cpp" />
+    <ClCompile Include="..\..\src\PrimitiveBatch.cpp" />
+    <ClCompile Include="..\..\src\Random.cpp" />
+    <ClCompile Include="..\..\src\Renderer.cpp" />
+    <ClCompile Include="..\..\src\onut.cpp" />
+    <ClCompile Include="..\..\src\Resource.cpp" />
+    <ClCompile Include="..\..\src\RTS.cpp" />
+    <ClCompile Include="..\..\src\Settings.cpp" />
+    <ClCompile Include="..\..\src\Sound.cpp" />
+    <ClCompile Include="..\..\src\SpriteAnim.cpp" />
+    <ClCompile Include="..\..\src\SpriteBatch.cpp" />
+    <ClCompile Include="..\..\src\Texture.cpp" />
+    <ClCompile Include="..\..\src\TiledMap.cpp" />
+    <ClCompile Include="..\..\src\Window.cpp" />
+    <ClCompile Include="..\..\src\zlib\adler32.c" />
+    <ClCompile Include="..\..\src\zlib\compress.c" />
+    <ClCompile Include="..\..\src\zlib\crc32.c" />
+    <ClCompile Include="..\..\src\zlib\deflate.c" />
+    <ClCompile Include="..\..\src\zlib\gzclose.c" />
+    <ClCompile Include="..\..\src\zlib\gzlib.c" />
+    <ClCompile Include="..\..\src\zlib\gzread.c" />
+    <ClCompile Include="..\..\src\zlib\gzwrite.c" />
+    <ClCompile Include="..\..\src\zlib\infback.c" />
+    <ClCompile Include="..\..\src\zlib\inffast.c" />
+    <ClCompile Include="..\..\src\zlib\inflate.c" />
+    <ClCompile Include="..\..\src\zlib\inftrees.c" />
+    <ClCompile Include="..\..\src\zlib\trees.c" />
+    <ClCompile Include="..\..\src\zlib\uncompr.c" />
+    <ClCompile Include="..\..\src\zlib\zutil.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5A0E49D2-55F1-4AB5-94F6-D19F308ECC46}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>onut</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>NOMINMAX;ONUT;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include;../../src;../../include/rapidjson</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <DisableSpecificWarnings>4005</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;cpprest120d_2_0.lib;brainCloudClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86;../../lib/win/Debug</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NOMINMAX;ONUT;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include;../../src;../../include/rapidjson</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4005</DisableSpecificWarnings>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;brainCloudClient.lib;cpprest120_2_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86;../../lib/win/Release</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,779 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\..\src\zlib\crc32.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\deflate.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\gzguts.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\inffast.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\inffixed.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\inflate.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\inftrees.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\trees.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\zconf.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\zlib.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zlib\zutil.h">
+      <Filter>thirdparties\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Resource.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Texture.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ContentManager.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Maths.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\onut.h" />
+    <ClInclude Include="..\..\include\onut\Font.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Music.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Sound.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\MFPlayer.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ForwardDeclaration.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\TiledMap.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ParticleSystem.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Log.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Http.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Async.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Random.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Settings.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Point.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Pool.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Updater.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\SpriteAnim.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Crypto.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\VideoPlayer.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\filewritestream.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\prettywriter.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\rapidjson.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\reader.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\stringbuffer.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\writer.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\document.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\filestream.h">
+      <Filter>thirdparties\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\internal\stack.h">
+      <Filter>thirdparties\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\internal\strfunc.h">
+      <Filter>thirdparties\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\rapidjson\internal\pow10.h">
+      <Filter>thirdparties\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\list\List.h">
+      <Filter>thirdparties\list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mp3\Mp3.h">
+      <Filter>thirdparties\mp3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LodePNG\LodePNG.h">
+      <Filter>thirdparties\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\dirent\dirent.h">
+      <Filter>thirdparties\dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\audio\WaveBankReader.h">
+      <Filter>thirdparties\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\audio\WAVFileReader.h">
+      <Filter>thirdparties\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\audio\Audio.h">
+      <Filter>thirdparties\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\audio\pch.h">
+      <Filter>thirdparties\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\audio\SoundCommon.h">
+      <Filter>thirdparties\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\tinyxml2\tinyxml2.h">
+      <Filter>thirdparties\tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\simplemath\SimpleMath.h">
+      <Filter>thirdparties\simplemath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Anim.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Tween.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Curve.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\GamePad.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Input.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InputDevice.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Renderer.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RendererD3D11.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\BlendMode.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\SampleMode.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\PrimitiveMode.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Shader.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\VertexBuffer.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\IndexBuffer.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ShaderD3D11.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\micropather\micropather.h">
+      <Filter>thirdparties\micropather</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\SpriteBatch.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Window.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\PrimitiveBatch.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Dispatcher.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Timer.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Timing.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIContext.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIEvents.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIComponents.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIControl.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIButton.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIPanel.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UILabel.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UIImage.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UICheckBox.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UITextBox.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\UITreeView.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UIJson.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Strings.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Files.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\RTS.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ActionManager.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ParticleSystemManager.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Particle.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ParticleEmitter.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Cloud.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudDataStream.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudEntity.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudEvent.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudFile.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudFriend.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGamification.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalApp.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalEntity.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudGlobalStatistics.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudIdentity.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudMatchmaking.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudOneWayMatch.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlaybackStream.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerState.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerStatistics.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPlayerStatisticsEvent.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudProduct.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudProfanity.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudPushNotification.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudRedemptionCode.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudS3Handling.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudScript.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudSocialLeaderboard.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudSteam.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTime.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTwitter.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudTypes.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\http_codes.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IBrainCloudComms.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IEventCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IFileUploadCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IGlobalErrorCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\INetworkErrorCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IRewardCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\IServerCallback.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\OperationParam.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\Platform.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\reason_codes.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\ServerCall.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\ServiceName.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\ServiceOperation.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudAsyncMatch.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudAuthentication.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\braincloud\BrainCloudClient.h">
+      <Filter>thirdparties\braincloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CloudBrainCloud.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jsoncpp\json\json.h">
+      <Filter>thirdparties\jsoncpp\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jsoncpp\json\json-forwards.h">
+      <Filter>thirdparties\jsoncpp\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\VertexBufferD3D11.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\IndexBufferD3D11.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TextureD3D11.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Images.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\Dialogs.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\onut\ThreadPool.h">
+      <Filter>services</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\zlib\gzlib.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\gzread.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\gzwrite.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\infback.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\inffast.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\inflate.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\inftrees.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\trees.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\uncompr.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\zutil.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\adler32.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\compress.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\crc32.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\deflate.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zlib\gzclose.c">
+      <Filter>thirdparties\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Resource.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Texture.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ContentManager.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Font.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Music.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Sound.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\MFPlayer.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TiledMap.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ParticleSystem.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Log.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Http.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Settings.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Pool.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Updater.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Crypto.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VideoPlayer.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Random.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\micropather.cpp">
+      <Filter>thirdparties\micropather</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mp3\Mp3.cpp">
+      <Filter>thirdparties\mp3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LodePNG\LodePNG.cpp">
+      <Filter>thirdparties\lodepng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\SoundEffect.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\SoundEffectInstance.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\WaveBank.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\WaveBankReader.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\WAVFileReader.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\AudioEngine.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\DynamicSoundEffectInstance.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\audio\SoundCommon.cpp">
+      <Filter>thirdparties\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tinyxml2\tinyxml2.cpp">
+      <Filter>thirdparties\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\simplemath\SimpleMath.cpp">
+      <Filter>thirdparties\simplemath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SpriteAnim.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Tween.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Curve.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GamePad.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InputDevice.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Input.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Renderer.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RendererD3D11.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\IndexBuffer.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Shader.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VertexBuffer.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ShaderD3D11.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SpriteBatch.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Window.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\PrimitiveBatch.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Dispatcher.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timer.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Timing.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIContext.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIButton.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UICheckBox.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIControl.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIImage.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIPanel.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UITextBox.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UILabel.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UITreeView.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIJson.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onut.cpp" />
+    <ClCompile Include="..\..\src\Strings.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Files.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RTS.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ActionManager.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Particle.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ParticleEmitter.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ParticleSystemManager.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Cloud.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CloudBrainCloud.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VertexBufferD3D11.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\IndexBufferD3D11.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TextureD3D11.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Images.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Dialogs.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ThreadPool.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="resources">
+      <UniqueIdentifier>{df7d4196-d4d0-4c6a-a6ea-bbf5f5ea3d3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="services">
+      <UniqueIdentifier>{524c9168-2061-4eec-8abc-f5fd17672f34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{6f3f3796-61df-448a-ba0d-ac196efa581a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties">
+      <UniqueIdentifier>{04c4131f-191f-4473-a06e-a65236b64c83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\rapidjson">
+      <UniqueIdentifier>{93438614-4667-42c6-9cd4-11fd8901e677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\rapidjson\internal">
+      <UniqueIdentifier>{0cbaa7a7-e23b-4068-9d31-931021b394a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\micropather">
+      <UniqueIdentifier>{56eda65d-d7c2-4749-92de-a37dd9c9db59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\list">
+      <UniqueIdentifier>{778ed4e5-6fe6-4ee8-8907-4d4d3f1ea7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\mp3">
+      <UniqueIdentifier>{b402a49c-1b62-4700-8035-cc55ba2238bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\zlib">
+      <UniqueIdentifier>{f490e9c5-e976-4386-a9e2-78c2d22bc76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\lodepng">
+      <UniqueIdentifier>{b363fb3f-a565-4498-b7be-e56a6e68cb77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\dirent">
+      <UniqueIdentifier>{8fcd1db3-eef8-4c79-8914-ed6365c4b1b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\audio">
+      <UniqueIdentifier>{0fcd117a-dc6b-4505-b51e-c00eb77824fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\tinyxml2">
+      <UniqueIdentifier>{a8654ab6-6ce0-4785-9796-6add1e23f92d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\simplemath">
+      <UniqueIdentifier>{76790f6d-533a-4fc6-8cab-5857fbbe8185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\braincloud">
+      <UniqueIdentifier>{6bcd5563-178b-459f-9d75-1653543c820b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\jsoncpp">
+      <UniqueIdentifier>{0dbae186-4011-40d1-9d0c-6ceb83f11525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparties\jsoncpp\json">
+      <UniqueIdentifier>{7c788f72-e58f-4019-af65-e2b372e04109}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
