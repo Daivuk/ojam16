@@ -17,8 +17,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_ LPSTR lpCmdLine,
                    _In_ int nShowCmd)
 {
+    oSettings->setIsFixedStep(true);
     oSettings->setGameName("Ottawa Game Jam 2016");
-    oSettings->setResolution({1024, 680});
+    oSettings->setResolution({800, 600});
 
     ORun(init, update, render, postRender);
 
@@ -27,6 +28,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 
 void init()
 {
+    oTiming->setUpdateFps(60);
     g_pFont = OGetFont("font.fnt");
 }
 
