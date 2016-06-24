@@ -32,6 +32,7 @@ struct Mesh
     uint32_t indexCount;
 };
 
+Mesh starMesh;
 Mesh atmosphereMesh;
 Mesh planetMesh;
 Mesh launchStationMesh;
@@ -44,6 +45,7 @@ OTextureRef pWhiteTexture;
 #define ZOOM 100
 #define ATMOSPHERES_COUNT 4
 #define ATMOSPHERES_SCALE 0.05f
+#define STAR_COUNT 300
 
 static const Color PLANET_COLOR = Color(0, .5f, 0, 1).AdjustedSaturation(.5f);
 static const Color ATMOSPHERE_BASE_COLOR = Color(0, .75f, 1, 1).AdjustedSaturation(.5f);
@@ -136,13 +138,26 @@ void init()
         planetMesh.pIB = OIndexBuffer::createStatic(indices, sizeof(indices));
         planetMesh.indexCount = sizeof(indices) / 2;
     }
+
+    //--- Stars
+    {
+        Mesh::Vertex vertices[STAR_COUNT];
+        for (int i = 0; i < STAR_COUNT; ++i)
+        {
+            auto& vertex = vertices[i];
+            vertex.position = ORandVector2(OScreenf);
+            vertex.color = Color::White * ORandFloat(.1f, .8f);
+        }
+        starMesh.pVB = OVertexBuffer::createStatic(vertices, sizeof(vertices));
+        starMesh.indexCount = STAR_COUNT;
+    }
 }
 
 void update()
 {
 }
 
-void drawMesh(const Matrix& transform, const Mesh& mesh)
+void drawMeshIndexed(const Matrix& transform, const Mesh& mesh)
 {
     oRenderer->renderStates.textures[0] = pWhiteTexture;
     oRenderer->renderStates.world = transform;
@@ -151,17 +166,26 @@ void drawMesh(const Matrix& transform, const Mesh& mesh)
     oRenderer->drawIndexed(mesh.indexCount);
 }
 
+void drawMesh(const Matrix& transform, const Mesh& mesh)
+{
+    oRenderer->renderStates.textures[0] = pWhiteTexture;
+    oRenderer->renderStates.world = transform;
+    oRenderer->renderStates.vertexBuffer = mesh.pVB;
+    oRenderer->draw(mesh.indexCount);
+}
+
 void render()
 {
     oRenderer->clear({0, 0, 0, 1});
-    oRenderer->setupFor2D();
-
-    //--- Setup camera on the rocket
-    oRenderer->set2DCameraOffCenter({0, 0}, 2);
 
     //--- Draw the world
-    drawMesh(Matrix::Identity, atmosphereMesh);
-    drawMesh(Matrix::Identity, planetMesh);
+    oRenderer->setupFor2D();
+    oRenderer->renderStates.primitiveMode = OPrimitivePointList;
+    drawMesh(Matrix::Identity, starMesh);
+    oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
+    oRenderer->set2DCameraOffCenter({0, 0}, 2);
+    drawMeshIndexed(Matrix::Identity, atmosphereMesh);
+    drawMeshIndexed(Matrix::Identity, planetMesh);
 
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
 }
