@@ -32,6 +32,7 @@ struct Mesh
     uint32_t indexCount;
 };
 
+Mesh atmosphereMesh;
 Mesh planetMesh;
 Mesh launchStationMesh;
 Mesh cloudMesh;
@@ -40,10 +41,11 @@ OTextureRef pWhiteTexture;
 
 #define PLANET_SIZE 100
 #define PLANET_SIDES 360
-
+#define ZOOM 100
 #define ATMOSPHERES_COUNT 4
+#define ATMOSPHERES_SCALE 0.05f
 
-static const Color PLANET_COLOR = Color(0, 1, 0, 1).AdjustedSaturation(.5f);
+static const Color PLANET_COLOR = Color(0, .5f, 0, 1).AdjustedSaturation(.5f);
 static const Color ATMOSPHERE_BASE_COLOR = Color(0, .75f, 1, 1).AdjustedSaturation(.5f);
 static const Color ATMOSPHERE_COLORS[ATMOSPHERES_COUNT] = {
     ATMOSPHERE_BASE_COLOR,
@@ -73,7 +75,47 @@ void init()
     uint32_t white = 0xFFFFFFFF;
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
 
-    // Create planet mesh + atmosphere n shit
+    // Create planet mesh + atmospheres n shit
+    {
+        Mesh::Vertex vertices[PLANET_SIDES * 2 * ATMOSPHERES_COUNT];
+        uint16_t indices[PLANET_SIDES * 6 * ATMOSPHERES_COUNT];
+        for (int a = 0; a < ATMOSPHERES_COUNT; ++a)
+        {
+            auto vertOffset = PLANET_SIDES * 2 * a;
+            auto indexOffset = PLANET_SIDES * 6 * a;
+            float d1 = ((float)a + 1);
+            float d2 = ((float)a);
+            d1 *= d1;
+            d2 *= d2;
+            d1 = PLANET_SIZE + PLANET_SIZE * ATMOSPHERES_SCALE * d1;
+            d2 = PLANET_SIZE + PLANET_SIZE * ATMOSPHERES_SCALE * d2;
+            for (int i = 0; i < PLANET_SIDES; ++i)
+            {
+                float angle = ((float)i / (float)PLANET_SIDES) * DirectX::XM_2PI;
+                {
+                    auto& vertex = vertices[vertOffset + i * 2 + 0];
+                    vertex.position.x = std::cosf(angle) * d1;
+                    vertex.position.y = -std::sinf(angle) * d1;
+                    vertex.color = ATMOSPHERE_COLORS[a];
+                }
+                {
+                    auto& vertex = vertices[vertOffset + i * 2 + 1];
+                    vertex.position.x = std::cosf(angle) * d2;
+                    vertex.position.y = -std::sinf(angle) * d2;
+                    vertex.color = ATMOSPHERE_COLORS[a];
+                }
+                indices[indexOffset + i * 6 + 0] = vertOffset + i * 2;
+                indices[indexOffset + i * 6 + 1] = vertOffset + ((i + 1) % PLANET_SIDES) * 2;
+                indices[indexOffset + i * 6 + 2] = vertOffset + i * 2 + 1;
+                indices[indexOffset + i * 6 + 3] = vertOffset + ((i + 1) % PLANET_SIDES) * 2;
+                indices[indexOffset + i * 6 + 4] = vertOffset + ((i + 1) % PLANET_SIDES) * 2 + 1;
+                indices[indexOffset + i * 6 + 5] = vertOffset + i * 2 + 1;
+            }
+        }
+        atmosphereMesh.pVB = OVertexBuffer::createStatic(vertices, sizeof(vertices));
+        atmosphereMesh.pIB = OIndexBuffer::createStatic(indices, sizeof(indices));
+        atmosphereMesh.indexCount = sizeof(indices) / 2;
+    }
     {
         Mesh::Vertex vertices[PLANET_SIDES + 1];
         uint16_t indices[PLANET_SIDES * 3];
@@ -84,7 +126,7 @@ void init()
             auto& vertex = vertices[i + 1];
             float angle = ((float)i / (float)PLANET_SIDES) * DirectX::XM_2PI;
             vertex.position.x = std::cosf(angle) * PLANET_SIZE;
-            vertex.position.y = std::sinf(angle) * PLANET_SIZE;
+            vertex.position.y = -std::sinf(angle) * PLANET_SIZE;
             vertex.color = PLANET_COLOR;
             indices[i * 3 + 0] = 0;
             indices[i * 3 + 1] = i + 1;
@@ -92,7 +134,7 @@ void init()
         }
         planetMesh.pVB = OVertexBuffer::createStatic(vertices, sizeof(vertices));
         planetMesh.pIB = OIndexBuffer::createStatic(indices, sizeof(indices));
-        planetMesh.indexCount = PLANET_SIDES * 3;
+        planetMesh.indexCount = sizeof(indices) / 2;
     }
 }
 
@@ -106,7 +148,7 @@ void drawMesh(const Matrix& transform, const Mesh& mesh)
     oRenderer->renderStates.world = transform;
     oRenderer->renderStates.vertexBuffer = mesh.pVB;
     oRenderer->renderStates.indexBuffer = mesh.pIB;
-    oRenderer->drawIndexed(planetMesh.indexCount);
+    oRenderer->drawIndexed(mesh.indexCount);
 }
 
 void render()
@@ -114,8 +156,12 @@ void render()
     oRenderer->clear({0, 0, 0, 1});
     oRenderer->setupFor2D();
 
+    //--- Setup camera on the rocket
+    oRenderer->set2DCameraOffCenter({0, 0}, 2);
+
     //--- Draw the world
-    drawMesh(Matrix::CreateTranslation(400, 300, 0), planetMesh);
+    drawMesh(Matrix::Identity, atmosphereMesh);
+    drawMesh(Matrix::Identity, planetMesh);
 
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
 }
