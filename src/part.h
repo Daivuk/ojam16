@@ -50,6 +50,7 @@ extern PartDef partDefs[PART_COUNT];
 extern Parts parts;
 extern Part* pMainPart;
 extern std::vector<std::vector<Part*>> stages;
+extern float globalStability;
 
 void deleteParts(Parts& parts);
 void initPartDefs();
@@ -61,3 +62,5 @@ Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parent
 void updatePart(Part* pPart);
 Matrix getWorldTransform(Part* pPart);
 Part* getTopParent(Part* pPart);
+float getTotalMass(Part* pPart);
+float getTotalStability(Part* pPart);

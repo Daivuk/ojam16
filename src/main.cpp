@@ -188,6 +188,18 @@ void activateNextStage()
     cameraOffset.play(cameraOffsetf, Vector2::Zero, 1, OTweenEaseOut);
 }
 
+void controlTheFuckingRocket()
+{
+    if (OInputPressed(OKeyLeft))
+    {
+        parts[0]->angleVelocity -= (10 + getTotalStability(parts[0])) / getTotalMass(parts[0]) * ODT;
+    }
+    else if (OInputPressed(OKeyRight))
+    {
+        parts[0]->angleVelocity += (10 + getTotalStability(parts[0])) / getTotalMass(parts[0]) * ODT;
+    }
+}
+
 void update()
 {
     switch (gameState)
@@ -234,6 +246,7 @@ void update()
             {
                 activateNextStage();
             }
+            controlTheFuckingRocket();
             for (auto pPart : parts) updatePart(pPart);
             speed = parts[0]->vel.Length();
             altitude = parts[0]->position.Length() - PLANET_SIZE;

@@ -16,6 +16,7 @@ OTextureRef pEngineCoverTexture;
 OTextureRef pFireTexture;
 OTextureRef pSmokeTexture;
 float shakeAmount = 0;
+float globalStability = 0;
 
 #define DEF_ATTACH_POINT(__part__, __x__, __y__) partDefs[__part__].attachPoints.push_back((Vector2(__x__, __y__) - Vector2(partDefs[__part__].pTexture->getSizef() / 2)) / 64)
 
@@ -238,6 +239,24 @@ Matrix getWorldTransform(Part* pPart)
     return std::move(transform);
 }
 
+float getTotalMass(Part* pPart)
+{
+    float ret = 0;
+    auto& partDef = partDefs[pPart->type];
+    ret += partDef.weight;
+    for (auto pChild : pPart->children) ret += getTotalMass(pChild);
+    return ret;
+}
+
+float getTotalStability(Part* pPart)
+{
+    float ret = 0;
+    auto& partDef = partDefs[pPart->type];
+    ret += partDef.stability;
+    for (auto pChild : pPart->children) ret += getTotalStability(pChild);
+    return ret;
+}
+
 void updatePart(Part* pPart)
 {
     auto& partDef = partDefs[pPart->type];
@@ -247,12 +266,14 @@ void updatePart(Part* pPart)
         totalMass = 0;
         centerOfMass = Vector2::Zero;
         shakeAmount = 0;
+        globalStability = 0;
     }
     else
     {
         centerOfMass += pPart->position * partDef.weight;
     }
 
+    globalStability += partDef.stability;
     totalMass += partDef.weight;
 
     if (pPart->pParent)
@@ -320,6 +341,22 @@ void updatePart(Part* pPart)
         pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
+        if (pPart->angleVelocity > 0)
+        {
+            pPart->angleVelocity -= globalStability / totalMass * 4 * ODT;
+            if (pPart->angleVelocity < 0)
+            {
+                pPart->angleVelocity = 0;
+            }
+        }
+        else if (pPart->angleVelocity < 0)
+        {
+            pPart->angleVelocity += globalStability / totalMass * 4 * ODT;
+            if (pPart->angleVelocity > 0)
+            {
+                pPart->angleVelocity = 0;
+            }
+        }
     }
 
     if (pPart->isActive)
