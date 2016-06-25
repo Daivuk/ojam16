@@ -346,7 +346,7 @@ void updatePart(Part* pPart)
                         2.0f,
                         45.0f,
                         pFireTexture
-                    }, 2, 10.0f, 360.0f, 0, 0);
+                    }, 2, 10.0f, 360.0f, 0, 0, -forward);
                     spawnParticles({
                         worldPos,
                         Vector2::Zero,
@@ -357,7 +357,7 @@ void updatePart(Part* pPart)
                         2.0f,
                         5.0f,
                         pSmokeTexture
-                    }, 1, 0, 360.0f, 0, 0);
+                    }, 1, 0, 360.0f, 0, 0, -forward);
                 }
                 break;
             }

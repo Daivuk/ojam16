@@ -18,7 +18,7 @@ struct Particle
     OTextureRef pTexture;
 };
 
-void spawnParticles(const Particle& templateParticle, int count, float spread, float angleRandom, float velRandom, float angleVelRandom);
+void spawnParticles(const Particle& templateParticle, int count, float spread, float angleRandom, float velRandom, float angleVelRandom, const Vector2& in_dir);
 void updateParticles();
 void drawParticles();
 

@@ -7,23 +7,27 @@
 
 Particles particles;
 
-void spawnParticles(const Particle& templateParticle, int count, float spread, float angleRandom, float velRandom, float angleVelRandom)
+void spawnParticles(const Particle& templateParticle, int count, float spread, float angleRandom, float velRandom, float angleVelRandom, const Vector2& in_dir)
 {
+    auto dir = in_dir;
+    dir.Normalize();
     for (int i = 0; i < count; ++i)
     {
-        auto dir = templateParticle.vel;
         auto velSize = dir.Length();
         if (velSize > 0.0f)
         {
-            dir /= velSize;
             float startAngle = std::atan2f(dir.y, dir.x);
             startAngle += DirectX::XMConvertToRadians(ORandFloat(-spread, spread));
-            dir.x = std::cosf(startAngle) * velSize;
-            dir.y = std::sinf(startAngle) * velSize;
+            auto velDir = templateParticle.vel;
+            velDir.Normalize();
+            auto dot = velDir.Dot(dir);
+            dot = 1 - std::fabsf(dot);
+            dir.x = std::cosf(startAngle) * velSize * dot;
+            dir.y = std::sinf(startAngle) * velSize * dot;
         }
         particles.push_back({
             templateParticle.position,
-            dir,
+            templateParticle.vel + dir,
             0,
             templateParticle.duration,
             templateParticle.colorFrom, templateParticle.colorTo,

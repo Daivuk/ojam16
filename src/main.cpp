@@ -88,6 +88,7 @@ void updateCamera()
 
 void decouple(Part* pPart)
 {
+    auto mtransform = getWorldTransform(pPart);
     for (auto pChild : pPart->children)
     {
         auto transform = getWorldTransform(pChild);
@@ -118,17 +119,51 @@ void decouple(Part* pPart)
             }
         }
     }
-    auto transform = getWorldTransform(pPart);
-    auto forward = transform.Up();
+    auto forward = mtransform.Up();
+    auto right = mtransform.Right();
+    right.Normalize();
     forward *= -1;
     forward.Normalize();
     pPart->angle = std::atan2f(forward.x, -forward.y);
-    pPart->position = transform.Translation();
+    pPart->position = mtransform.Translation();
     pPart->pParent = nullptr;
     pPart->angleVelocity += ORandFloat(-1, 1);
     pPart->children.clear();
     parts.push_back(pPart);
+
+    extern OTextureRef pSmokeTexture;
+    spawnParticles({
+        pPart->position,
+        pPart->vel - Vector2(right) * ORandFloat(.15f, .25f),
+        0,
+        1,
+        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+        .5f, 0.65f,
+        2.0f,
+        45.0f,
+        pSmokeTexture
+    }, 3, 30, 360.0f, 0, 0, -right);
+    spawnParticles({
+        pPart->position,
+        pPart->vel + Vector2(right) * ORandFloat(.15f, .25f),
+        0,
+        1,
+        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+        .5f, 0.65f,
+        2.0f,
+        45.0f,
+        pSmokeTexture
+    }, 3, 30, 360.0f, 0, 0, right);
 }
+//Vector2 position;
+//Vector2 vel;
+//float life;
+//float duration;
+//Color colorFrom, colorTo;
+//float sizeFrom, sizeTo;
+//float angle;
+//float angleVel;
+//OTextureRef pTexture;
 
 void activateNextStage()
 {
@@ -155,7 +190,6 @@ void activateNextStage()
 
 void update()
 {
-    updateParticles();
     switch (gameState)
     {
         case GAME_STATE_EDITOR:
@@ -175,6 +209,8 @@ void update()
                 stages.push_back({}); // Add empty stage at the end so we can start with nothing happening
                 zoom = 256.0f / (vrect.w / 2);
                 zoom = std::min(64.0f, zoom);
+                extern Part* pHoverPart;
+                pHoverPart = nullptr;
             }
             else
             {
@@ -205,6 +241,7 @@ void update()
             break;
         }
     }
+    updateParticles();
 }
 
 void drawWorld()
