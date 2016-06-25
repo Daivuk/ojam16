@@ -28,8 +28,7 @@ OFontRef g_pFont;
 OTextureRef pWhiteTexture;
 OTextureRef pMiniMap;
 
-OAnimFloat zoomAnim;
-float zoom = .01f;
+float zoom = 64;
 int gameState = GAME_STATE_EDITOR;
 Vector2 cameraPos;
 
@@ -68,6 +67,54 @@ void updateCamera()
     cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
 }
 
+void decouple(Part* pPart)
+{
+    for (auto pChild : pPart->children)
+    {
+        parts.push_back(pChild);
+        pChild->angleVelocity += ORandFloat(-1, 1);
+        auto currentDir = pChild->vel;
+        currentDir.Normalize();
+        pChild->vel -= currentDir * 2;
+        pChild->pParent = nullptr;
+    }
+    if (pPart->pParent)
+    {
+        auto currentDir = pPart->pParent->vel;
+        pPart->pParent->vel += currentDir * 2;
+        for (auto it = pPart->pParent->children.begin(); it != pPart->pParent->children.end(); ++it)
+        {
+            if (*it == pPart)
+            {
+                pPart->pParent->children.erase(it);
+                break;
+            }
+        }
+    }
+    pPart->pParent = nullptr;
+    pPart->angleVelocity += ORandFloat(-1, 1);
+    pPart->children.clear();
+    parts.push_back(pPart);
+}
+
+void activateNextStage()
+{
+    auto currentState = stages.back();
+    stages.erase(stages.end() - 1);
+    if (!stages.empty())
+    {
+        auto& newStage = stages.back();
+        for (auto pPart : newStage)
+        {
+            pPart->isActive = true;
+            if (pPart->type == PART_DECOUPLER)
+            {
+                decouple(pPart);
+            }
+        }
+    }
+}
+
 void update()
 {
     switch (gameState)
@@ -81,11 +128,13 @@ void update()
             else if (OInputJustPressed(OKeySpaceBar))
             {
                 gameState = GAME_STATE_STAND_BY;
-                parts[0]->position = {0, -PLANET_SIZE - vehiculeRect(parts[0]).w};
-                zoomAnim.queue(1, 1);
-                zoomAnim.queue(ZOOM, 5.0f, OTweenEaseBoth);
-                zoomAnim.play();
-                cameraPos = vehiculeRect(parts[0]).Center();
+                auto vrect = vehiculeRect(parts[0]);
+                parts[0]->position = {0, -PLANET_SIZE - vrect.w};
+                vrect = vehiculeRect(parts[0]);
+                cameraPos = vrect.Center();
+                stages.push_back({}); // Add empty stage at the end so we can start with nothing happening
+                zoom = 256.0f / (vrect.w / 2);
+                zoom = std::min(64.0f, zoom);
             }
             else
             {
@@ -95,20 +144,24 @@ void update()
         }
         case GAME_STATE_STAND_BY:
         {
+            updateCamera();
             if (OInputJustPressed(OKeySpaceBar))
             {
-                zoomAnim.stop(true);
+                activateNextStage();
             }
-            zoom = zoomAnim.get();
-            updateCamera();
             break;
         }
         case GAME_STATE_FLIGHT:
         {
+            updateCamera();
+            if (OInputJustPressed(OKeySpaceBar))
+            {
+                activateNextStage();
+            }
+            for (auto pPart : parts) updatePart(pPart);
             break;
         }
     }
-
 }
 
 void drawWorld()
@@ -117,7 +170,7 @@ void drawWorld()
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
     drawMesh(Matrix::Identity, starMesh);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
-    oRenderer->set2DCameraOffCenter(cameraPos, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
+    oRenderer->set2DCameraOffCenter(cameraPos, zoom);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
 }
@@ -125,7 +178,7 @@ void drawWorld()
 void drawParts()
 {
     oSpriteBatch->begin();
-    oRenderer->set2DCameraOffCenter(cameraPos, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
+    oRenderer->set2DCameraOffCenter(cameraPos, zoom);
     drawParts(Matrix::Identity, parts);
     drawOnTops();
     oSpriteBatch->drawOutterOutlineRect(vehiculeRect(parts[0]), .1f, Color(1, 1, 0));

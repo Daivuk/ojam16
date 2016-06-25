@@ -19,6 +19,7 @@ int holdingPart = -1;
 Part* pTargetPart = nullptr;
 int targetAttachPoint = -1;
 int targetAttachPointSelf = -1;
+Part* pHoverPart = nullptr;
 
 Vector2 mousePosOnDown;
 bool isPanning = false;
@@ -51,6 +52,9 @@ void resetEditor()
     pMainPart->angle = 0;
     pMainPart->type = PART_TOP_CONE;
     parts.push_back(pMainPart);
+
+    stages.clear();
+    stages.push_back({pMainPart});
 }
 
 void doPanningZoom()
@@ -189,8 +193,29 @@ void doSnappingLogic()
     isHoldingValid = pTargetPart != nullptr;
 }
 
+void trimStages()
+{
+    for (auto it = stages.begin(); it != stages.end();)
+    {
+        auto& stage = *it;
+        if (stage.empty() && it == stages.begin())
+        {
+            it = stages.erase(it);
+            continue;
+        }
+        if (stage.empty() && it == stages.end() - 1)
+        {
+            it = stages.erase(it);
+            if (it > stages.begin()) --it;
+            continue;
+        }
+        ++it;
+    }
+}
+
 void updateEditor(float dt)
 {
+    pHoverPart = nullptr;
     doPanningZoom();
     if (holdingPart != -1)
     {
@@ -210,9 +235,16 @@ void updateEditor(float dt)
                 pPart->type = holdingPart;
                 pPart->position = targetPartDef.attachPoints[targetAttachPoint] - partDef.attachPoints[targetAttachPointSelf];
                 pPart->usedAttachPoints.insert(targetAttachPointSelf);
+                pPart->pParent = pTargetPart;
                 pTargetPart->usedAttachPoints.insert(targetAttachPoint);
                 pTargetPart->children.push_back(pPart);
                 holdingPart = -1;
+
+                if (partDef.isStaged)
+                {
+                    // Add to a new stage
+                    stages.push_back({pPart});
+                }
             }
         }
     }
@@ -223,6 +255,83 @@ void updateEditor(float dt)
             OInputJustPressed(OMouse1))
         {
             holdingPart = mouseHoverPartInScrollView;
+        }
+        if (holdingPart == -1)
+        {
+            auto transform = Matrix::CreateTranslation(editorCamPos) * Matrix::CreateScale(ZOOM_LEVELS[editorZoom]) * Matrix::CreateTranslation((OScreenWf - SCROLL_VIEW_W) / 2 + SCROLL_VIEW_W, OScreenHf / 2, 0);
+            auto invTransform = transform.Invert();
+            Vector2 worldMouse = Vector2::Transform(oInput->mousePosf, invTransform);
+
+            pHoverPart = mouseHoverPart(parts[0], worldMouse);
+        }
+    }
+    if (pHoverPart)
+    {
+        if (OInputJustPressed(OKeyDown))
+        {
+            int stageIndex = 0;
+            for (auto& stage : stages)
+            {
+                bool found = false;
+                for (auto it = stage.begin(); it != stage.end(); ++it)
+                {
+                    auto pPart = *it;
+                    if (pPart == pHoverPart)
+                    {
+                        stage.erase(it);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    break;
+                }
+                ++stageIndex;
+            }
+            ++stageIndex;
+            if ((int)stages.size() <= stageIndex)
+            {
+                stages.push_back({pHoverPart});
+            }
+            else
+            {
+                stages[stageIndex].push_back(pHoverPart);
+            }
+            trimStages();
+        }
+        else if (OInputJustPressed(OKeyUp))
+        {
+            int stageIndex = 0;
+            for (auto& stage : stages)
+            {
+                bool found = false;
+                for (auto it = stage.begin(); it != stage.end(); ++it)
+                {
+                    auto pPart = *it;
+                    if (pPart == pHoverPart)
+                    {
+                        stage.erase(it);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    break;
+                }
+                ++stageIndex;
+            }
+            --stageIndex;
+            if (stageIndex < 0)
+            {
+                stages.insert(stages.begin(), {pHoverPart});
+            }
+            else
+            {
+                stages[stageIndex].push_back(pHoverPart);
+            }
+            trimStages();
         }
     }
 }
@@ -284,4 +393,30 @@ void drawEditor()
                                isHoldingValid ? Color(0, 1, 0, 1) : Color(1, 0, 0, 1));
         oSpriteBatch->end();
     }
+
+    // Draw stages on the right
+    oSpriteBatch->begin();
+    Vector2 stageTextPos(OScreenWf - 20.0f, 20.0f);
+    int stageId = (int)stages.size();
+    for (auto& stage : stages)
+    {
+        g_pFont->draw("--- Stage " + std::to_string(stageId) + " ---", stageTextPos, OTopRight, Color(1, 1, 1));
+        stageTextPos.y += 16;
+        for (auto pPart : stage)
+        {
+            auto& partDef = partDefs[pPart->type];
+            if (pPart == pHoverPart)
+            {
+                g_pFont->draw("--> " + partDef.name, stageTextPos, OTopRight, Color(1, 0, 1));
+            }
+            else
+            {
+                g_pFont->draw(partDef.name, stageTextPos, OTopRight, Color(0, 1, 1));
+            }
+            stageTextPos.y += 16;
+        }
+        stageTextPos.y += 16;
+        --stageId;
+    }
+    oSpriteBatch->end();
 }

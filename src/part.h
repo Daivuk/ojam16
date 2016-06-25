@@ -12,6 +12,9 @@ struct PartDef
     OTextureRef pTexture;
     Vector2 hsize;
     float weight;
+    float fuel = 0;
+    float stability = 0;
+    bool isStaged = false;
     std::vector<Vector2> attachPoints;
     int price;
     std::string name;
@@ -20,11 +23,17 @@ struct PartDef
 struct Part
 {
     Vector2 position;
+    Vector2 vel;
     float angle = 0;
+    float angleVelocity = 0;
     int type;
+    float liquidFuel = 0;
+    float solidFuel = 0;
     Parts children;
     bool fixed = false;
+    bool isActive = false;
     std::set<int> usedAttachPoints;
+    Part* pParent = nullptr;
 };
 
 #define PART_TOP_CONE 0
@@ -36,6 +45,7 @@ struct Part
 extern PartDef partDefs[PART_COUNT];
 extern Parts parts;
 extern Part* pMainPart;
+extern std::vector<std::vector<Part*>> stages;
 
 void deleteParts(Parts& parts);
 void initPartDefs();
@@ -43,3 +53,5 @@ void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent = null
 void drawAnchors(const Matrix& parentTransform, Parts& parts);
 void drawOnTops();
 Rect vehiculeRect(Part* pPart, const Vector2& parentPos = Vector2::Zero);
+Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parentPos = Vector2::Zero);
+void updatePart(Part* pPart);

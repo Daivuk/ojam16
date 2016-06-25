@@ -1,11 +1,15 @@
 #include <onut/SpriteBatch.h>
 #include <onut/Renderer.h>
+#include <onut/Timing.h>
 
 #include "part.h"
 
 PartDef partDefs[PART_COUNT];
 Parts parts;
 Part* pMainPart = nullptr;
+std::vector<std::vector<Part*>> stages;
+
+#define GRAVITY 3.0f
 
 OTextureRef pEngineCoverTexture;
 
@@ -21,6 +25,7 @@ void initPartDefs()
     partDefs[PART_TOP_CONE].weight = 2;
     partDefs[PART_TOP_CONE].name = "Payload";
     partDefs[PART_TOP_CONE].price = 0;
+    partDefs[PART_TOP_CONE].isStaged = true;
 
     partDefs[PART_SOLID_ROCKET].pTexture = OGetTexture("PART_SOLID_ROCKET.png");
     partDefs[PART_SOLID_ROCKET].hsize = partDefs[PART_SOLID_ROCKET].pTexture->getSizef() / 128.0f;
@@ -31,6 +36,7 @@ void initPartDefs()
     partDefs[PART_SOLID_ROCKET].weight = 5;
     partDefs[PART_SOLID_ROCKET].name = "Solid Fuel Rocket";
     partDefs[PART_SOLID_ROCKET].price = 200;
+    partDefs[PART_SOLID_ROCKET].isStaged = true;
 
     partDefs[PART_DECOUPLER].pTexture = OGetTexture("PART_DECOUPLER.png");
     partDefs[PART_DECOUPLER].hsize = partDefs[PART_DECOUPLER].pTexture->getSizef() / 128.0f;
@@ -39,6 +45,7 @@ void initPartDefs()
     partDefs[PART_DECOUPLER].weight = .25f;
     partDefs[PART_DECOUPLER].name = "Decoupler";
     partDefs[PART_DECOUPLER].price = 75;
+    partDefs[PART_DECOUPLER].isStaged = true;
 
     partDefs[PART_CONE].pTexture = OGetTexture("PART_CONE.png");
     partDefs[PART_CONE].hsize = partDefs[PART_CONE].pTexture->getSizef() / 128.0f;
@@ -64,8 +71,11 @@ struct OnTopSprite
     Matrix transform;
 };
 
+extern Part* pHoverPart;
+
 using OnTopSprites = std::vector<OnTopSprite>;
 OnTopSprites onTopSprites;
+OnTopSprite hoverSprite;
 
 void drawOnTops()
 {
@@ -76,6 +86,12 @@ void drawOnTops()
                                  Color::White);
     }
     onTopSprites.clear();
+    if (pHoverPart)
+    {
+        oSpriteBatch->drawSprite(hoverSprite.pTexture,
+                                 hoverSprite.transform,
+                                 Color(1.5f, .75f, 1.5f, 1));
+    }
 }
 
 void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
@@ -84,6 +100,10 @@ void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
     {
         auto& partDef = partDefs[pPart->type];
         Matrix transform = parentTransform * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+        if (pPart == pHoverPart)
+        {
+            hoverSprite = {partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform};
+        }
         if (pPart->type == PART_DECOUPLER)
         {
             if (pParent)
@@ -140,4 +160,59 @@ Rect vehiculeRect(Part* pPart, const Vector2& parentPos)
         ret = newRect;
     }
     return ret;
+}
+
+Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parentPos)
+{
+    auto& partDef = partDefs[pPart->type];
+    Rect ret;
+    ret.x = parentPos.x + pPart->position.x - partDef.hsize.x;
+    ret.y = parentPos.y + pPart->position.y - partDef.hsize.y;
+    ret.z = partDef.hsize.x * 2;
+    ret.w = partDef.hsize.y * 2;
+    ret = ret.Grow(.1f);
+    for (auto pChild : pPart->children)
+    {
+        auto pRet = mouseHoverPart(pChild, mousePos, parentPos + pPart->position);
+        if (pRet)
+        {
+            return pRet;
+        }
+    }
+    if (ret.Contains(mousePos)) return pPart;
+    return nullptr;
+}
+
+void updatePart(Part* pPart)
+{
+    if (pPart->isActive)
+    {
+        auto& partDef = partDefs[pPart->type];
+        switch (pPart->type)
+        {
+            case PART_SOLID_ROCKET:
+            {
+                break;
+            }
+        }
+    }
+
+    if (pPart->pParent)
+    {
+        // Copy parent's physic
+        pPart->vel = pPart->pParent->vel;
+        pPart->angleVelocity = pPart->pParent->angleVelocity;
+    }
+    else
+    {
+        auto dirToPlanet = pPart->position;
+        dirToPlanet.Normalize();
+        pPart->vel += dirToPlanet * GRAVITY;
+        pPart->position += pPart->vel * ODT;
+    }
+
+    for (auto pChild : pPart->children)
+    {
+        updatePart(pChild);
+    }
 }
