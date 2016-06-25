@@ -184,7 +184,7 @@ void createAtmospheres()
                 auto& vertex = vertices[vertOffset + i * 2 + 0];
                 vertex.position.x = std::cosf(angle) * d1;
                 vertex.position.y = -std::sinf(angle) * d1;
-                vertex.color = ATMOSPHERE_COLORS[a];
+                vertex.color = ATMOSPHERE_COLORS[a + 1];
             }
             {
                 auto& vertex = vertices[vertOffset + i * 2 + 1];

@@ -13,16 +13,21 @@ std::vector<std::vector<Part*>> stages;
 #define GRAVITY 3.0f
 
 OTextureRef pEngineCoverTexture;
+OTextureRef pFireTexture;
+OTextureRef pSmokeTexture;
+float shakeAmount = 0;
 
 #define DEF_ATTACH_POINT(__part__, __x__, __y__) partDefs[__part__].attachPoints.push_back((Vector2(__x__, __y__) - Vector2(partDefs[__part__].pTexture->getSizef() / 2)) / 64)
 
 void initPartDefs()
 {
     pEngineCoverTexture = OGetTexture("engineCover.png");
+    pFireTexture = OGetTexture("PARTICLE_FIRE.png");
+    pSmokeTexture = OGetTexture("PARTICLE_SMOKE.png");
 
     partDefs[PART_TOP_CONE].pTexture = OGetTexture("PART_TOP_CONE.png");
     partDefs[PART_TOP_CONE].hsize = partDefs[PART_TOP_CONE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_TOP_CONE, 32, 75);
+    DEF_ATTACH_POINT(PART_TOP_CONE, 32, 62);
     partDefs[PART_TOP_CONE].weight = 5;
     partDefs[PART_TOP_CONE].name = "Payload";
     partDefs[PART_TOP_CONE].price = 0;
@@ -31,9 +36,9 @@ void initPartDefs()
     partDefs[PART_SOLID_ROCKET].pTexture = OGetTexture("PART_SOLID_ROCKET.png");
     partDefs[PART_SOLID_ROCKET].hsize = partDefs[PART_SOLID_ROCKET].pTexture->getSizef() / 128.0f;
     DEF_ATTACH_POINT(PART_SOLID_ROCKET, 32, 4);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 32, 122);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 2, 54);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 62, 54);
+    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 32, 96);
+    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 2, 32);
+    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 62, 32);
     partDefs[PART_SOLID_ROCKET].weight = 5;
     partDefs[PART_SOLID_ROCKET].name = "Solid Fuel Rocket";
     partDefs[PART_SOLID_ROCKET].price = 200;
@@ -43,8 +48,8 @@ void initPartDefs()
 
     partDefs[PART_DECOUPLER].pTexture = OGetTexture("PART_DECOUPLER.png");
     partDefs[PART_DECOUPLER].hsize = partDefs[PART_DECOUPLER].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_DECOUPLER, 31, 4);
-    DEF_ATTACH_POINT(PART_DECOUPLER, 31, 8);
+    DEF_ATTACH_POINT(PART_DECOUPLER, 32, 3);
+    DEF_ATTACH_POINT(PART_DECOUPLER, 32, 13);
     partDefs[PART_DECOUPLER].weight = .25f;
     partDefs[PART_DECOUPLER].name = "Decoupler";
     partDefs[PART_DECOUPLER].price = 75;
@@ -52,10 +57,27 @@ void initPartDefs()
 
     partDefs[PART_CONE].pTexture = OGetTexture("PART_CONE.png");
     partDefs[PART_CONE].hsize = partDefs[PART_CONE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_CONE, 32, 40);
+    DEF_ATTACH_POINT(PART_CONE, 32, 31);
     partDefs[PART_CONE].weight = .5f;
     partDefs[PART_CONE].name = "Aerodynamic Cone";
     partDefs[PART_CONE].price = 50;
+    partDefs[PART_CONE].stability = 1.25f;
+
+    partDefs[FIN_SMALL_LEFT].pTexture = OGetTexture("FIN_SMALL_LEFT.png");
+    partDefs[FIN_SMALL_LEFT].hsize = partDefs[FIN_SMALL_LEFT].pTexture->getSizef() / 128.0f;
+    DEF_ATTACH_POINT(FIN_SMALL_LEFT, 31, 16);
+    partDefs[FIN_SMALL_LEFT].weight = .25f;
+    partDefs[FIN_SMALL_LEFT].name = "Small Fin";
+    partDefs[FIN_SMALL_LEFT].price = 50;
+    partDefs[FIN_SMALL_LEFT].stability = 1;
+
+    partDefs[FIN_SMALL_RIGHT].pTexture = OGetTexture("FIN_SMALL_RIGHT.png");
+    partDefs[FIN_SMALL_RIGHT].hsize = partDefs[FIN_SMALL_RIGHT].pTexture->getSizef() / 128.0f;
+    DEF_ATTACH_POINT(FIN_SMALL_RIGHT, 1, 16);
+    partDefs[FIN_SMALL_RIGHT].weight = .25f;
+    partDefs[FIN_SMALL_RIGHT].name = "Small Fin";
+    partDefs[FIN_SMALL_RIGHT].price = 50;
+    partDefs[FIN_SMALL_RIGHT].stability = 1;
 }
 
 void deleteParts(Parts& parts)
@@ -97,6 +119,12 @@ void drawOnTops()
     }
 }
 
+Part* getTopParent(Part* pPart)
+{
+    if (!pPart->pParent) return pPart;
+    return getTopParent(pPart->pParent);
+}
+
 void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
 {
     for (auto pPart : parts)
@@ -113,7 +141,7 @@ void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
             {
                 if (pParent->type == PART_SOLID_ROCKET)
                 {
-                    onTopSprites.push_back({pEngineCoverTexture, Matrix::CreateScale(1.0f / 64.0f) * Matrix::CreateTranslation(0, -.25f, 0) * transform});
+                    onTopSprites.push_back({pEngineCoverTexture, Matrix::CreateScale(1.0f / 64.0f) * Matrix::CreateTranslation(0, -.35f, 0) * transform});
                 }
             }
             onTopSprites.push_back({partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform});
@@ -218,6 +246,7 @@ void updatePart(Part* pPart)
         forces.clear();
         totalMass = 0;
         centerOfMass = Vector2::Zero;
+        shakeAmount = 0;
     }
     else
     {
@@ -241,36 +270,15 @@ void updatePart(Part* pPart)
             {
                 if (pPart->solidFuel > 0)
                 {
+                    shakeAmount += 1;
                     pPart->solidFuel -= ODT;
-                    forces.push_back({{0, -partDef.trust}, {pPart->position.x, pPart->position.y + 1.0f}});
                     auto transform = getWorldTransform(pPart);
                     auto worldPos = transform.Translation();
                     auto forward = transform.Up();
-                    forward.y *= -1;
+                    forward *= -1;
                     forward.Normalize();
-                    worldPos -= forward;
-                    spawnParticles({
-                        worldPos,
-                        pPart->vel - Vector2(forward * 10.0f),
-                        0,
-                        .25f,
-                        Color(1, 1, 0, 1), Color(0, 0, 0, 0),
-                        .5f, 2.0f,
-                        2.0f,
-                        45.0f,
-                        nullptr
-                    }, 2, 10.0f, 360.0f, 0, 0);
-                    spawnParticles({
-                        worldPos,
-                        Vector2::Zero,
-                        0,
-                        1,
-                        Color(0, 0, 0, 0), Color(1, 1, 1, .5f),
-                        .5f, 10.0f,
-                        2.0f,
-                        5.0f,
-                        nullptr
-                    }, 1, 0, 360.0f, 0, 0);
+                    worldPos -= forward * .75f;
+                    forces.push_back({forward * partDef.trust, worldPos});
                     if (pPart->solidFuel <= 0.0f)
                     {
                         pPart->solidFuel = 0;
@@ -312,5 +320,47 @@ void updatePart(Part* pPart)
         pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
+    }
+
+    if (pPart->isActive)
+    {
+        switch (pPart->type)
+        {
+            case PART_SOLID_ROCKET:
+            {
+                if (pPart->solidFuel > 0)
+                {
+                    auto transform = getWorldTransform(pPart);
+                    auto worldPos = transform.Translation();
+                    auto forward = transform.Up();
+                    forward *= -1;
+                    forward.Normalize();
+                    worldPos -= forward * .75f;
+                    spawnParticles({
+                        worldPos,
+                        pPart->vel - Vector2(forward * 10.0f),
+                        0,
+                        .25f,
+                        Color(1, 1, 0, 1), Color(0, 0, 0, 0),
+                        .5f, 2.0f,
+                        2.0f,
+                        45.0f,
+                        pFireTexture
+                    }, 2, 10.0f, 360.0f, 0, 0);
+                    spawnParticles({
+                        worldPos,
+                        Vector2::Zero,
+                        0,
+                        1,
+                        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+                        .5f, 10.0f,
+                        2.0f,
+                        5.0f,
+                        pSmokeTexture
+                    }, 1, 0, 360.0f, 0, 0);
+                }
+                break;
+            }
+        }
     }
 }

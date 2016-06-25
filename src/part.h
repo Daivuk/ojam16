@@ -42,7 +42,9 @@ struct Part
 #define PART_SOLID_ROCKET 1
 #define PART_DECOUPLER 2
 #define PART_CONE 3
-#define PART_COUNT 4
+#define FIN_SMALL_LEFT 4
+#define FIN_SMALL_RIGHT 5
+#define PART_COUNT 6
 
 extern PartDef partDefs[PART_COUNT];
 extern Parts parts;
@@ -58,3 +60,4 @@ Rect vehiculeRect(Part* pPart, const Vector2& parentPos = Vector2::Zero);
 Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parentPos = Vector2::Zero);
 void updatePart(Part* pPart);
 Matrix getWorldTransform(Part* pPart);
+Part* getTopParent(Part* pPart);

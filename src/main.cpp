@@ -32,6 +32,10 @@ OTextureRef pMiniMap;
 float zoom = 64;
 int gameState = GAME_STATE_EDITOR;
 Vector2 cameraPos;
+OAnimVector2 cameraOffset;
+OAnimVector2 cameraShaking;
+float speed = 0;
+float altitude = 0;
 
 #define MINIMAP_SIZE 192
 
@@ -62,11 +66,24 @@ void init()
     resetEditor();
 }
 
+extern float shakeAmount;
+
 void updateCamera()
 {
-    auto targetCamera = vehiculeRect(parts[0]).Center();
+    auto targetCamera = vehiculeRect(parts[0]).Center() - parts[0]->position;
+    targetCamera = Vector2::Transform(targetCamera, Matrix::CreateRotationZ(parts[0]->angle));
+    targetCamera += parts[0]->position;
+
     //cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
-    cameraPos = targetCamera;
+    cameraPos = targetCamera + cameraOffset.get() + cameraShaking.get();
+
+    shakeAmount /= ((altitude < 1 ? 1 : altitude) / 100);
+    shakeAmount = std::min(1.0f, shakeAmount);
+    if (!cameraShaking.isPlaying())
+    {
+        Vector2 dir = ORandVector2(-Vector2::One, Vector2::One);
+        cameraShaking.playFromCurrent(dir * shakeAmount * .05f, .05f, OTweenEaseOut);
+    }
 }
 
 void decouple(Part* pPart)
@@ -75,13 +92,13 @@ void decouple(Part* pPart)
     {
         auto transform = getWorldTransform(pChild);
         auto forward = transform.Up();
-        forward.y *= -1;
+        forward *= -1;
         forward.Normalize();
         auto currentDir = pChild->vel;
         currentDir.Normalize();
         pChild->angleVelocity += ORandFloat(-1, 1);
         pChild->vel -= currentDir;
-        pChild->angle = std::atan2f(forward.y, forward.x);
+        pChild->angle = std::atan2f(forward.x, -forward.y);
         pChild->position = transform.Translation();
         pChild->pParent = nullptr;
         parts.push_back(pChild);
@@ -90,7 +107,8 @@ void decouple(Part* pPart)
     {
         auto currentDir = pPart->pParent->vel;
         currentDir.Normalize();
-        pPart->pParent->vel += currentDir;
+        auto pTopParent = getTopParent(pPart->pParent);
+        pTopParent->vel += currentDir;
         for (auto it = pPart->pParent->children.begin(); it != pPart->pParent->children.end(); ++it)
         {
             if (*it == pPart)
@@ -101,6 +119,10 @@ void decouple(Part* pPart)
         }
     }
     auto transform = getWorldTransform(pPart);
+    auto forward = transform.Up();
+    forward *= -1;
+    forward.Normalize();
+    pPart->angle = std::atan2f(forward.x, -forward.y);
     pPart->position = transform.Translation();
     pPart->pParent = nullptr;
     pPart->angleVelocity += ORandFloat(-1, 1);
@@ -110,6 +132,7 @@ void decouple(Part* pPart)
 
 void activateNextStage()
 {
+    auto cameraBefore = vehiculeRect(parts[0]).Center() - parts[0]->position;
     auto currentState = stages.back();
     stages.erase(stages.end() - 1);
     if (!stages.empty())
@@ -124,6 +147,10 @@ void activateNextStage()
             }
         }
     }
+    auto cameraAfter = vehiculeRect(parts[0]).Center() - parts[0]->position;
+    auto cameraOffsetf = cameraBefore - cameraAfter;
+    cameraOffsetf = Vector2::Transform(cameraOffsetf, Matrix::CreateRotationZ(parts[0]->angle));
+    cameraOffset.play(cameraOffsetf, Vector2::Zero, 1, OTweenEaseOut);
 }
 
 void update()
@@ -142,6 +169,7 @@ void update()
                 gameState = GAME_STATE_STAND_BY;
                 auto vrect = vehiculeRect(parts[0]);
                 parts[0]->position = {0, -PLANET_SIZE - vrect.w};
+                parts[0]->angle = 0;
                 vrect = vehiculeRect(parts[0]);
                 cameraPos = vrect.Center();
                 stages.push_back({}); // Add empty stage at the end so we can start with nothing happening
@@ -171,6 +199,8 @@ void update()
                 activateNextStage();
             }
             for (auto pPart : parts) updatePart(pPart);
+            speed = parts[0]->vel.Length();
+            altitude = parts[0]->position.Length() - PLANET_SIZE;
             updateCamera();
             break;
         }
@@ -239,7 +269,6 @@ void drawStages()
             oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, (pPart->solidFuel + pPart->liquidFuel) / (partDef.solidFuel + partDef.liquidFuel)* 100.0f, 14.f}, Color(1, 1, 0, 1));
             stageTextPos.y += 16;
         }
-        stageTextPos.y += 16;
         --stageId;
     }
     oSpriteBatch->end();
@@ -283,9 +312,12 @@ void render()
             break;
         }
     }
-
-    //--- Draw parts
+    oSpriteBatch->begin();
+    oSpriteBatch->drawRect(nullptr, {OScreenCenterXf - 50, 0, 100, 32}, Color(0, 0, 0, .5f));
+    g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 0}, OTop, Color(1, .5f, 0, 1));
+    g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 16.0f}, OTop, Color(1, .5f, 0, 1));
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
+    oSpriteBatch->end();
 }
 
 void postRender()

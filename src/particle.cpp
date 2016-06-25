@@ -2,6 +2,7 @@
 #include <onut/Timing.h>
 #include <onut/SpriteBatch.h>
 #include <onut/Random.h>
+#include <onut/Texture.h>
 #include "particle.h"
 
 Particles particles;
@@ -58,6 +59,7 @@ void drawParticles()
     {
         auto color = OLerp(particle.colorFrom, particle.colorTo, particle.life);
         auto size = OLerp(particle.sizeFrom, particle.sizeTo, particle.life);
+        size /= particle.pTexture->getSizef().x;
         oSpriteBatch->drawSprite(particle.pTexture, particle.position, color, particle.angle, size);
     }
 }
