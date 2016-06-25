@@ -1,9 +1,12 @@
+#include <onut/Curve.h>
 #include <onut/SpriteBatch.h>
 #include <onut/Renderer.h>
 #include <onut/Timing.h>
+#include <onut/Random.h>
 
 #include "part.h"
 #include "particle.h"
+#include "defines.h"
 
 PartDef partDefs[PART_COUNT];
 Parts parts;
@@ -342,6 +345,10 @@ void updatePart(Part* pPart)
             pPart->angleVelocity -= (angularEffect / totalMass * 100) * ODT;
         }
 
+        float turbulence = 50.0f / std::max(1.0f, (pPart->position.Length() - PLANET_SIZE));
+        turbulence *= pPart->vel.Length();
+        turbulence = OLerp(turbulence, 0.0f, std::max(0.0f, std::min(1.0f, (pPart->position.Length() - PLANET_SIZE) / 2000)));
+        pPart->angleVelocity += (ORandFloat(-turbulence, turbulence) / totalMass) * ODT;
         pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
