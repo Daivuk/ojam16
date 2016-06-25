@@ -73,11 +73,15 @@ void decouple(Part* pPart)
 {
     for (auto pChild : pPart->children)
     {
-        pChild->angleVelocity += ORandFloat(-1, 1);
+        auto transform = getWorldTransform(pChild);
+        auto forward = transform.Up();
+        forward.y *= -1;
+        forward.Normalize();
         auto currentDir = pChild->vel;
         currentDir.Normalize();
+        pChild->angleVelocity += ORandFloat(-1, 1);
         pChild->vel -= currentDir;
-        auto transform = getWorldTransform(pChild);
+        pChild->angle = std::atan2f(forward.y, forward.x);
         pChild->position = transform.Translation();
         pChild->pParent = nullptr;
         parts.push_back(pChild);
@@ -269,11 +273,11 @@ void render()
         case GAME_STATE_FLIGHT:
         {
             drawWorld();
+            drawParts();
             oSpriteBatch->begin();
             oRenderer->set2DCameraOffCenter(cameraPos, zoom);
             drawParticles();
             oSpriteBatch->end();
-            drawParts();
             drawStages();
             drawMiniMap();
             break;

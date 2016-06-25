@@ -102,7 +102,7 @@ void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
     for (auto pPart : parts)
     {
         auto& partDef = partDefs[pPart->type];
-        Matrix transform = parentTransform * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+        Matrix transform = Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position) * parentTransform;
         if (pPart == pHoverPart)
         {
             hoverSprite = {partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform};
@@ -133,7 +133,7 @@ void drawAnchors(const Matrix& parentTransform, Parts& parts)
     for (auto pPart : parts)
     {
         auto& partDef = partDefs[pPart->type];
-        Matrix transform = parentTransform * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+        Matrix transform = Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position) * parentTransform;
         oSpriteBatch->begin(transform);
         for (auto& attachPoint : partDef.attachPoints)
         {
@@ -201,7 +201,7 @@ Matrix getWorldTransform(Part* pPart)
     Matrix transform;
     if (pPart->pParent)
     {
-        transform = getWorldTransform(pPart->pParent) * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+        transform = Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position) * getWorldTransform(pPart->pParent);
     }
     else
     {
@@ -246,10 +246,12 @@ void updatePart(Part* pPart)
                     auto transform = getWorldTransform(pPart);
                     auto worldPos = transform.Translation();
                     auto forward = transform.Up();
+                    forward.y *= -1;
                     forward.Normalize();
+                    worldPos -= forward;
                     spawnParticles({
                         worldPos,
-                        pPart->vel * .25f + Vector2(forward * 10.0f),
+                        pPart->vel - Vector2(forward * 10.0f),
                         0,
                         .25f,
                         Color(1, 1, 0, 1), Color(0, 0, 0, 0),
@@ -304,9 +306,10 @@ void updatePart(Part* pPart)
             float directEffect = std::fabsf(dirToCenterOfMass.y);
             float angularEffect = dirToCenterOfMass.x;
             pPart->vel += Vector2(force.force / totalMass) * ODT;
-            pPart->angleVelocity += (angularEffect / totalMass) * ODT;
+            pPart->angleVelocity -= (angularEffect / totalMass * 2) * ODT;
         }
 
+        pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
     }
