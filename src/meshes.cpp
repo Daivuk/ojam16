@@ -257,3 +257,22 @@ void createMeshes()
     createSolidRocket();
     createCone();
 }
+
+extern OTextureRef pWhiteTexture;
+
+void drawMeshIndexed(const Matrix& transform, const Mesh& mesh)
+{
+    oRenderer->renderStates.textures[0] = pWhiteTexture;
+    oRenderer->renderStates.world = transform;
+    oRenderer->renderStates.vertexBuffer = mesh.pVB;
+    oRenderer->renderStates.indexBuffer = mesh.pIB;
+    oRenderer->drawIndexed(mesh.indexCount);
+}
+
+void drawMesh(const Matrix& transform, const Mesh& mesh)
+{
+    oRenderer->renderStates.textures[0] = pWhiteTexture;
+    oRenderer->renderStates.world = transform;
+    oRenderer->renderStates.vertexBuffer = mesh.pVB;
+    oRenderer->draw(mesh.indexCount);
+}

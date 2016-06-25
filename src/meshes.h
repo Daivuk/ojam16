@@ -27,3 +27,5 @@ extern Mesh solidRocketMesh;
 extern Mesh coneMesh;
 
 void createMeshes();
+void drawMeshIndexed(const Matrix& transform, const Mesh& mesh);
+void drawMesh(const Matrix& transform, const Mesh& mesh);

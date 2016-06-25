@@ -10,10 +10,14 @@
 #include <onut/VertexBuffer.h>
 #include <onut/IndexBuffer.h>
 #include <onut/Texture.h>
-#include "meshes.h"
-#include <vector>
 #include <onut/Anim.h>
 #include <onut/Input.h>
+
+#include <vector>
+
+#include "meshes.h"
+#include "part.h"
+#include "editor.h"
 
 void init();
 void update();
@@ -23,22 +27,9 @@ void postRender();
 OFontRef g_pFont;
 OTextureRef pWhiteTexture;
 
-struct Part;
-using Parts = std::vector<Part*>;
-
-struct Part
-{
-    Vector2 position;
-    float angle;
-    Mesh* pMesh;
-    Parts children;
-    bool fixed = false;
-};
-
-Parts parts;
-Part* pMainPart = nullptr;
 OAnimFloat zoomAnim;
 float zoom = .01f;
+int gameState = GAME_STATE_EDITOR;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_opt_ HINSTANCE hPrevInstance,
@@ -54,36 +45,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
     return 0;
 }
 
-Part* createSolidRocket(const Vector2& position, float angle)
-{
-    Part* pPart = new Part();
-    pPart->position = position;
-    pPart->angle = angle;
-    pPart->pMesh = &solidRocketMesh;
-    return pPart;
-}
-
-Part* createTopCone(const Vector2& position, float angle)
-{
-    Part* pPart = new Part();
-    pPart->position = position;
-    pPart->angle = angle;
-    pPart->pMesh = &coneMesh;
-    return pPart;
-}
-
-void createSampleRocket()
-{
-    auto pTopCone = createTopCone({0, -PLANET_SIZE - 2.5f}, 0.0f);
-    auto pSolidRocket1 = createSolidRocket({0, 1.0f}, 0.0f);
-    auto pSolidRocket2 = createSolidRocket({0, 1.25f}, 0.0f);
-
-    pMainPart = pTopCone;
-    parts.push_back(pTopCone);
-    pTopCone->children.push_back(pSolidRocket1);
-    pSolidRocket1->children.push_back(pSolidRocket2);
-}
-
 void init()
 {
     oTiming->setUpdateFps(60);
@@ -92,54 +53,52 @@ void init()
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
     createMeshes();
     
-    createSampleRocket();
-
-    zoomAnim.queue(1, 1);
-    zoomAnim.queue(ZOOM, 5.0f, OTweenEaseBoth);
-    zoomAnim.play();
+    initPartDefs();
+    resetEditor();
 }
 
 void update()
 {
-    if (OInputJustPressed(OKeySpaceBar))
+    switch (gameState)
     {
-        zoomAnim.stop(true);
+        case GAME_STATE_EDITOR:
+        {
+            if (OInputJustPressed(OKeyEscape))
+            {
+                resetEditor();
+            }
+            else if (OInputJustPressed(OKeySpaceBar))
+            {
+                gameState = GAME_STATE_STAND_BY;
+                zoomAnim.queue(1, 1);
+                zoomAnim.queue(ZOOM, 5.0f, OTweenEaseBoth);
+                zoomAnim.play();
+            }
+            else
+            {
+                updateEditor(ODT);
+            }
+            break;
+        }
+        case GAME_STATE_STAND_BY:
+        {
+            if (OInputJustPressed(OKeySpaceBar))
+            {
+                zoomAnim.stop(true);
+            }
+            zoom = zoomAnim.get();
+            break;
+        }
+        case GAME_STATE_FLIGHT:
+        {
+            break;
+        }
     }
-    zoom = zoomAnim.get();
+
 }
 
-void drawMeshIndexed(const Matrix& transform, const Mesh& mesh)
+void drawWorld()
 {
-    oRenderer->renderStates.textures[0] = pWhiteTexture;
-    oRenderer->renderStates.world = transform;
-    oRenderer->renderStates.vertexBuffer = mesh.pVB;
-    oRenderer->renderStates.indexBuffer = mesh.pIB;
-    oRenderer->drawIndexed(mesh.indexCount);
-}
-
-void drawMesh(const Matrix& transform, const Mesh& mesh)
-{
-    oRenderer->renderStates.textures[0] = pWhiteTexture;
-    oRenderer->renderStates.world = transform;
-    oRenderer->renderStates.vertexBuffer = mesh.pVB;
-    oRenderer->draw(mesh.indexCount);
-}
-
-void drawParts(const Parts& parts, const Matrix& parentTransform)
-{
-    for (auto pPart : parts)
-    {
-        Matrix transform = parentTransform * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
-        drawMeshIndexed(transform, *pPart->pMesh);
-        drawParts(pPart->children, transform);
-    }
-}
-
-void render()
-{
-    oRenderer->clear({0, 0, 0, 1});
-
-    //--- Draw the world
     oRenderer->setupFor2D();
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
     drawMesh(Matrix::Identity, starMesh);
@@ -147,10 +106,36 @@ void render()
     oRenderer->set2DCameraOffCenter({0, -PLANET_SIZE}, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
+}
+
+void render()
+{
+    oRenderer->clear({0, 0, 0, 1});
+
+    switch (gameState)
+    {
+        case GAME_STATE_EDITOR:
+        {
+            drawEditor();
+            g_pFont->draw("PRESS ^990ESC^999 TO CLEAR", {OScreenWf / 2, OScreenHf-24}, OBottom);
+            g_pFont->draw("PRESS ^990SPACE BAR^999 TO LAUNCH", {OScreenWf / 2, OScreenHf-8}, OBottom);
+            break;
+        }
+        case GAME_STATE_STAND_BY:
+        {
+            drawWorld();
+            //drawParts(parts, Matrix::Identity);
+            break;
+        }
+        case GAME_STATE_FLIGHT:
+        {
+            drawWorld();
+            //drawParts(parts, Matrix::Identity);
+            break;
+        }
+    }
 
     //--- Draw parts
-    drawParts(parts, Matrix::Identity);
-
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
 }
 

@@ -81,8 +81,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\editor.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\meshes.cpp" />
+    <ClCompile Include="..\..\src\part.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\onut\project\win\onut.vcxproj">
@@ -91,7 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\defines.h" />
+    <ClInclude Include="..\..\src\editor.h" />
     <ClInclude Include="..\..\src\meshes.h" />
+    <ClInclude Include="..\..\src\part.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
