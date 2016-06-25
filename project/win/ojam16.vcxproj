@@ -85,6 +85,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\meshes.cpp" />
     <ClCompile Include="..\..\src\part.cpp" />
+    <ClCompile Include="..\..\src\particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\onut\project\win\onut.vcxproj">
@@ -96,6 +97,7 @@
     <ClInclude Include="..\..\src\editor.h" />
     <ClInclude Include="..\..\src\meshes.h" />
     <ClInclude Include="..\..\src\part.h" />
+    <ClInclude Include="..\..\src\particle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

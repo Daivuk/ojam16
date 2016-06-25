@@ -5,11 +5,13 @@
     <ClCompile Include="..\..\src\meshes.cpp" />
     <ClCompile Include="..\..\src\part.cpp" />
     <ClCompile Include="..\..\src\editor.cpp" />
+    <ClCompile Include="..\..\src\particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\meshes.h" />
     <ClInclude Include="..\..\src\defines.h" />
     <ClInclude Include="..\..\src\part.h" />
     <ClInclude Include="..\..\src\editor.h" />
+    <ClInclude Include="..\..\src\particle.h" />
   </ItemGroup>
 </Project>

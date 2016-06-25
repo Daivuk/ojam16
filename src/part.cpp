@@ -3,6 +3,7 @@
 #include <onut/Timing.h>
 
 #include "part.h"
+#include "particle.h"
 
 PartDef partDefs[PART_COUNT];
 Parts parts;
@@ -22,7 +23,7 @@ void initPartDefs()
     partDefs[PART_TOP_CONE].pTexture = OGetTexture("PART_TOP_CONE.png");
     partDefs[PART_TOP_CONE].hsize = partDefs[PART_TOP_CONE].pTexture->getSizef() / 128.0f;
     DEF_ATTACH_POINT(PART_TOP_CONE, 32, 75);
-    partDefs[PART_TOP_CONE].weight = 2;
+    partDefs[PART_TOP_CONE].weight = 5;
     partDefs[PART_TOP_CONE].name = "Payload";
     partDefs[PART_TOP_CONE].price = 0;
     partDefs[PART_TOP_CONE].isStaged = true;
@@ -36,7 +37,9 @@ void initPartDefs()
     partDefs[PART_SOLID_ROCKET].weight = 5;
     partDefs[PART_SOLID_ROCKET].name = "Solid Fuel Rocket";
     partDefs[PART_SOLID_ROCKET].price = 200;
+    partDefs[PART_SOLID_ROCKET].solidFuel = 10;
     partDefs[PART_SOLID_ROCKET].isStaged = true;
+    partDefs[PART_SOLID_ROCKET].trust = 100;
 
     partDefs[PART_DECOUPLER].pTexture = OGetTexture("PART_DECOUPLER.png");
     partDefs[PART_DECOUPLER].hsize = partDefs[PART_DECOUPLER].pTexture->getSizef() / 128.0f;
@@ -183,19 +186,45 @@ Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parent
     return nullptr;
 }
 
+struct Force
+{
+    Vector2 force;
+    Vector2 position;
+};
+float totalMass = 0;
+Vector2 centerOfMass;
+using Forces = std::vector<Force>;
+Forces forces;
+
+Matrix getWorldTransform(Part* pPart)
+{
+    Matrix transform;
+    if (pPart->pParent)
+    {
+        transform = getWorldTransform(pPart->pParent) * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+    }
+    else
+    {
+        transform = Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+    }
+    return std::move(transform);
+}
+
 void updatePart(Part* pPart)
 {
-    if (pPart->isActive)
+    auto& partDef = partDefs[pPart->type];
+    if (!pPart->pParent)
     {
-        auto& partDef = partDefs[pPart->type];
-        switch (pPart->type)
-        {
-            case PART_SOLID_ROCKET:
-            {
-                break;
-            }
-        }
+        forces.clear();
+        totalMass = 0;
+        centerOfMass = Vector2::Zero;
     }
+    else
+    {
+        centerOfMass += pPart->position * partDef.weight;
+    }
+
+    totalMass += partDef.weight;
 
     if (pPart->pParent)
     {
@@ -203,16 +232,82 @@ void updatePart(Part* pPart)
         pPart->vel = pPart->pParent->vel;
         pPart->angleVelocity = pPart->pParent->angleVelocity;
     }
-    else
+
+    if (pPart->isActive)
     {
-        auto dirToPlanet = pPart->position;
-        dirToPlanet.Normalize();
-        pPart->vel += dirToPlanet * GRAVITY;
-        pPart->position += pPart->vel * ODT;
+        switch (pPart->type)
+        {
+            case PART_SOLID_ROCKET:
+            {
+                if (pPart->solidFuel > 0)
+                {
+                    pPart->solidFuel -= ODT;
+                    forces.push_back({{0, -partDef.trust}, {pPart->position.x, pPart->position.y + 1.0f}});
+                    auto transform = getWorldTransform(pPart);
+                    auto worldPos = transform.Translation();
+                    auto forward = transform.Up();
+                    forward.Normalize();
+                    spawnParticles({
+                        worldPos,
+                        pPart->vel * .25f + Vector2(forward * 10.0f),
+                        0,
+                        .25f,
+                        Color(1, 1, 0, 1), Color(0, 0, 0, 0),
+                        .5f, 2.0f,
+                        2.0f,
+                        45.0f,
+                        nullptr
+                    }, 2, 10.0f, 360.0f, 0, 0);
+                    spawnParticles({
+                        worldPos,
+                        Vector2::Zero,
+                        0,
+                        1,
+                        Color(0, 0, 0, 0), Color(1, 1, 1, .5f),
+                        .5f, 10.0f,
+                        2.0f,
+                        5.0f,
+                        nullptr
+                    }, 1, 0, 360.0f, 0, 0);
+                    if (pPart->solidFuel <= 0.0f)
+                    {
+                        pPart->solidFuel = 0;
+                    }
+                }
+                break;
+            }
+        }
     }
 
     for (auto pChild : pPart->children)
     {
         updatePart(pChild);
+    }
+
+    // Finalize update and physic of the main body
+    if (!pPart->pParent)
+    {
+        auto dirToPlanet = -pPart->position;
+        dirToPlanet.Normalize();
+
+        // Apply different forces
+        // f = ma
+        // a = f / m
+        centerOfMass /= totalMass;
+        for (int i = 0; i < (int)forces.size(); ++i)
+        {
+            auto& force = forces[i];
+            Vector2 dirToCenterOfMass = force.position - centerOfMass;
+            dirToCenterOfMass.Normalize();
+            auto forceDir = force.force;
+            forceDir.Normalize();
+            float directEffect = std::fabsf(dirToCenterOfMass.y);
+            float angularEffect = dirToCenterOfMass.x;
+            pPart->vel += Vector2(force.force / totalMass) * ODT;
+            pPart->angleVelocity += (angularEffect / totalMass) * ODT;
+        }
+
+        pPart->vel += dirToPlanet * GRAVITY * ODT;
+        pPart->position += pPart->vel * ODT;
     }
 }

@@ -12,8 +12,10 @@ struct PartDef
     OTextureRef pTexture;
     Vector2 hsize;
     float weight;
-    float fuel = 0;
+    float liquidFuel = 0;
+    float solidFuel = 0;
     float stability = 0;
+    float trust = 0;
     bool isStaged = false;
     std::vector<Vector2> attachPoints;
     int price;
@@ -55,3 +57,4 @@ void drawOnTops();
 Rect vehiculeRect(Part* pPart, const Vector2& parentPos = Vector2::Zero);
 Part* mouseHoverPart(Part* pPart, const Vector2& mousePos, const Vector2& parentPos = Vector2::Zero);
 void updatePart(Part* pPart);
+Matrix getWorldTransform(Part* pPart);

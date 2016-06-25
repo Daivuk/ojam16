@@ -18,6 +18,7 @@
 #include "meshes.h"
 #include "part.h"
 #include "editor.h"
+#include "particle.h"
 
 void init();
 void update();
@@ -50,7 +51,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
 
 void init()
 {
-    oTiming->setUpdateFps(60);
+    oTiming->setUpdateFps(30);
     g_pFont = OGetFont("font.fnt");
     uint32_t white = 0xFFFFFFFF;
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
@@ -64,24 +65,28 @@ void init()
 void updateCamera()
 {
     auto targetCamera = vehiculeRect(parts[0]).Center();
-    cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
+    //cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
+    cameraPos = targetCamera;
 }
 
 void decouple(Part* pPart)
 {
     for (auto pChild : pPart->children)
     {
-        parts.push_back(pChild);
         pChild->angleVelocity += ORandFloat(-1, 1);
         auto currentDir = pChild->vel;
         currentDir.Normalize();
-        pChild->vel -= currentDir * 2;
+        pChild->vel -= currentDir;
+        auto transform = getWorldTransform(pChild);
+        pChild->position = transform.Translation();
         pChild->pParent = nullptr;
+        parts.push_back(pChild);
     }
     if (pPart->pParent)
     {
         auto currentDir = pPart->pParent->vel;
-        pPart->pParent->vel += currentDir * 2;
+        currentDir.Normalize();
+        pPart->pParent->vel += currentDir;
         for (auto it = pPart->pParent->children.begin(); it != pPart->pParent->children.end(); ++it)
         {
             if (*it == pPart)
@@ -91,6 +96,8 @@ void decouple(Part* pPart)
             }
         }
     }
+    auto transform = getWorldTransform(pPart);
+    pPart->position = transform.Translation();
     pPart->pParent = nullptr;
     pPart->angleVelocity += ORandFloat(-1, 1);
     pPart->children.clear();
@@ -117,6 +124,7 @@ void activateNextStage()
 
 void update()
 {
+    updateParticles();
     switch (gameState)
     {
         case GAME_STATE_EDITOR:
@@ -144,21 +152,22 @@ void update()
         }
         case GAME_STATE_STAND_BY:
         {
-            updateCamera();
             if (OInputJustPressed(OKeySpaceBar))
             {
                 activateNextStage();
+                gameState = GAME_STATE_FLIGHT;
             }
+            updateCamera();
             break;
         }
         case GAME_STATE_FLIGHT:
         {
-            updateCamera();
             if (OInputJustPressed(OKeySpaceBar))
             {
                 activateNextStage();
             }
             for (auto pPart : parts) updatePart(pPart);
+            updateCamera();
             break;
         }
     }
@@ -181,7 +190,9 @@ void drawParts()
     oRenderer->set2DCameraOffCenter(cameraPos, zoom);
     drawParts(Matrix::Identity, parts);
     drawOnTops();
-    oSpriteBatch->drawOutterOutlineRect(vehiculeRect(parts[0]), .1f, Color(1, 1, 0));
+    //extern Vector2 centerOfMass;
+    //oSpriteBatch->drawCross(centerOfMass + parts[0]->position, .05f, Color(0, .5f, 1, 1));
+    //oSpriteBatch->drawOutterOutlineRect(vehiculeRect(parts[0]), .1f, Color(1, 1, 0));
     oSpriteBatch->end();
 }
 
@@ -205,6 +216,31 @@ void drawMiniMap()
     oSpriteBatch->end();
 }
 
+void drawStages()
+{
+    // Draw stages on the right
+    oSpriteBatch->begin();
+    oSpriteBatch->drawRect(nullptr, {0, 0, 132.f, OScreenHf}, Color(0, 0, 0, .5f));
+    Vector2 stageTextPos(20.0f, 20.0f);
+    int stageId = (int)stages.size();
+    for (auto& stage : stages)
+    {
+        g_pFont->draw("--- Stage " + std::to_string(stageId) + " ---", stageTextPos, OTopLeft, Color(1, 1, 1));
+        stageTextPos.y += 16;
+        for (auto pPart : stage)
+        {
+            auto& partDef = partDefs[pPart->type];
+            g_pFont->draw(partDef.name, stageTextPos, OTopLeft, Color(0, 1, 1));
+            stageTextPos.y += 16;
+            oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, (pPart->solidFuel + pPart->liquidFuel) / (partDef.solidFuel + partDef.liquidFuel)* 100.0f, 14.f}, Color(1, 1, 0, 1));
+            stageTextPos.y += 16;
+        }
+        stageTextPos.y += 16;
+        --stageId;
+    }
+    oSpriteBatch->end();
+}
+
 void render()
 {
     oRenderer->clear({0, 0, 0, 1});
@@ -221,14 +257,24 @@ void render()
         case GAME_STATE_STAND_BY:
         {
             drawWorld();
+            oSpriteBatch->begin();
+            oRenderer->set2DCameraOffCenter(cameraPos, zoom);
+            drawParticles();
+            oSpriteBatch->end();
             drawParts();
+            drawStages();
             drawMiniMap();
             break;
         }
         case GAME_STATE_FLIGHT:
         {
             drawWorld();
+            oSpriteBatch->begin();
+            oRenderer->set2DCameraOffCenter(cameraPos, zoom);
+            drawParticles();
+            oSpriteBatch->end();
             drawParts();
+            drawStages();
             drawMiniMap();
             break;
         }

@@ -236,6 +236,8 @@ void updateEditor(float dt)
                 pPart->position = targetPartDef.attachPoints[targetAttachPoint] - partDef.attachPoints[targetAttachPointSelf];
                 pPart->usedAttachPoints.insert(targetAttachPointSelf);
                 pPart->pParent = pTargetPart;
+                pPart->solidFuel = partDef.solidFuel;
+                pPart->liquidFuel = partDef.liquidFuel;
                 pTargetPart->usedAttachPoints.insert(targetAttachPoint);
                 pTargetPart->children.push_back(pPart);
                 holdingPart = -1;
