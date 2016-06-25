@@ -325,17 +325,21 @@ void updatePart(Part* pPart)
         // f = ma
         // a = f / m
         centerOfMass /= totalMass;
+        auto transformMe = getWorldTransform(pPart);
+        auto worldCenterOfMass = Vector2::Transform(centerOfMass, transformMe);
+        auto right = Vector2(transformMe.Right());
+        right.Normalize();
         for (int i = 0; i < (int)forces.size(); ++i)
         {
             auto& force = forces[i];
-            Vector2 dirToCenterOfMass = force.position - centerOfMass;
+            Vector2 dirToCenterOfMass = force.position - worldCenterOfMass;
             dirToCenterOfMass.Normalize();
             auto forceDir = force.force;
             forceDir.Normalize();
             float directEffect = std::fabsf(dirToCenterOfMass.y);
-            float angularEffect = dirToCenterOfMass.x;
+            float angularEffect = dirToCenterOfMass.Dot(right);
             pPart->vel += Vector2(force.force / totalMass) * ODT;
-            pPart->angleVelocity -= (angularEffect / totalMass * 2) * ODT;
+            pPart->angleVelocity -= (angularEffect / totalMass * 100) * ODT;
         }
 
         pPart->angle += pPart->angleVelocity * ODT;

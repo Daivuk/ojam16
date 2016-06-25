@@ -12,6 +12,7 @@
 #include <onut/Texture.h>
 #include <onut/Anim.h>
 #include <onut/Input.h>
+#include <onut/Music.h>
 
 #include <vector>
 
@@ -223,6 +224,7 @@ void update()
                 zoom = std::min(64.0f, zoom);
                 extern Part* pHoverPart;
                 pHoverPart = nullptr;
+                OPlayMusic("OJAM2016_Music_Launch.mp3");
             }
             else
             {
