@@ -23,4 +23,7 @@ extern Mesh planetMesh;
 extern Mesh launchStationMesh;
 extern Mesh cloudMesh;
 
+extern Mesh solidRocketMesh;
+extern Mesh coneMesh;
+
 void createMeshes();

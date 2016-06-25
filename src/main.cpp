@@ -11,6 +11,9 @@
 #include <onut/IndexBuffer.h>
 #include <onut/Texture.h>
 #include "meshes.h"
+#include <vector>
+#include <onut/Anim.h>
+#include <onut/Input.h>
 
 void init();
 void update();
@@ -19,6 +22,23 @@ void postRender();
 
 OFontRef g_pFont;
 OTextureRef pWhiteTexture;
+
+struct Part;
+using Parts = std::vector<Part*>;
+
+struct Part
+{
+    Vector2 position;
+    float angle;
+    Mesh* pMesh;
+    Parts children;
+    bool fixed = false;
+};
+
+Parts parts;
+Part* pMainPart = nullptr;
+OAnimFloat zoomAnim;
+float zoom = .01f;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_opt_ HINSTANCE hPrevInstance,
@@ -34,6 +54,36 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
     return 0;
 }
 
+Part* createSolidRocket(const Vector2& position, float angle)
+{
+    Part* pPart = new Part();
+    pPart->position = position;
+    pPart->angle = angle;
+    pPart->pMesh = &solidRocketMesh;
+    return pPart;
+}
+
+Part* createTopCone(const Vector2& position, float angle)
+{
+    Part* pPart = new Part();
+    pPart->position = position;
+    pPart->angle = angle;
+    pPart->pMesh = &coneMesh;
+    return pPart;
+}
+
+void createSampleRocket()
+{
+    auto pTopCone = createTopCone({0, -PLANET_SIZE - 2.5f}, 0.0f);
+    auto pSolidRocket1 = createSolidRocket({0, 1.0f}, 0.0f);
+    auto pSolidRocket2 = createSolidRocket({0, 1.25f}, 0.0f);
+
+    pMainPart = pTopCone;
+    parts.push_back(pTopCone);
+    pTopCone->children.push_back(pSolidRocket1);
+    pSolidRocket1->children.push_back(pSolidRocket2);
+}
+
 void init()
 {
     oTiming->setUpdateFps(60);
@@ -41,10 +91,21 @@ void init()
     uint32_t white = 0xFFFFFFFF;
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
     createMeshes();
+    
+    createSampleRocket();
+
+    zoomAnim.queue(1, 1);
+    zoomAnim.queue(ZOOM, 5.0f, OTweenEaseBoth);
+    zoomAnim.play();
 }
 
 void update()
 {
+    if (OInputJustPressed(OKeySpaceBar))
+    {
+        zoomAnim.stop(true);
+    }
+    zoom = zoomAnim.get();
 }
 
 void drawMeshIndexed(const Matrix& transform, const Mesh& mesh)
@@ -64,6 +125,16 @@ void drawMesh(const Matrix& transform, const Mesh& mesh)
     oRenderer->draw(mesh.indexCount);
 }
 
+void drawParts(const Parts& parts, const Matrix& parentTransform)
+{
+    for (auto pPart : parts)
+    {
+        Matrix transform = parentTransform * Matrix::CreateRotationZ(pPart->angle) * Matrix::CreateTranslation(pPart->position);
+        drawMeshIndexed(transform, *pPart->pMesh);
+        drawParts(pPart->children, transform);
+    }
+}
+
 void render()
 {
     oRenderer->clear({0, 0, 0, 1});
@@ -73,9 +144,12 @@ void render()
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
     drawMesh(Matrix::Identity, starMesh);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
-    oRenderer->set2DCameraOffCenter({0, -PLANET_SIZE}, ZOOM);
+    oRenderer->set2DCameraOffCenter({0, -PLANET_SIZE}, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
+
+    //--- Draw parts
+    drawParts(parts, Matrix::Identity);
 
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
 }
