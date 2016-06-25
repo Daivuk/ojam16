@@ -26,10 +26,14 @@ void postRender();
 
 OFontRef g_pFont;
 OTextureRef pWhiteTexture;
+OTextureRef pMiniMap;
 
 OAnimFloat zoomAnim;
 float zoom = .01f;
 int gameState = GAME_STATE_EDITOR;
+Vector2 cameraPos;
+
+#define MINIMAP_SIZE 192
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_opt_ HINSTANCE hPrevInstance,
@@ -51,10 +55,17 @@ void init()
     g_pFont = OGetFont("font.fnt");
     uint32_t white = 0xFFFFFFFF;
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
+    pMiniMap = OTexture::createRenderTarget({MINIMAP_SIZE, MINIMAP_SIZE}, false);
     createMeshes();
     
     initPartDefs();
     resetEditor();
+}
+
+void updateCamera()
+{
+    auto targetCamera = vehiculeRect(parts[0]).Center();
+    cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
 }
 
 void update()
@@ -70,9 +81,11 @@ void update()
             else if (OInputJustPressed(OKeySpaceBar))
             {
                 gameState = GAME_STATE_STAND_BY;
+                parts[0]->position = {0, -PLANET_SIZE - vehiculeRect(parts[0]).w};
                 zoomAnim.queue(1, 1);
                 zoomAnim.queue(ZOOM, 5.0f, OTweenEaseBoth);
                 zoomAnim.play();
+                cameraPos = vehiculeRect(parts[0]).Center();
             }
             else
             {
@@ -87,6 +100,7 @@ void update()
                 zoomAnim.stop(true);
             }
             zoom = zoomAnim.get();
+            updateCamera();
             break;
         }
         case GAME_STATE_FLIGHT:
@@ -103,9 +117,39 @@ void drawWorld()
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
     drawMesh(Matrix::Identity, starMesh);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
-    oRenderer->set2DCameraOffCenter({0, -PLANET_SIZE}, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
+    oRenderer->set2DCameraOffCenter(cameraPos, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
+}
+
+void drawParts()
+{
+    oSpriteBatch->begin();
+    oRenderer->set2DCameraOffCenter(cameraPos, std::powf((zoom - .01f) / ZOOM, 3) * ZOOM + .01f);
+    drawParts(Matrix::Identity, parts);
+    drawOnTops();
+    oSpriteBatch->drawOutterOutlineRect(vehiculeRect(parts[0]), .1f, Color(1, 1, 0));
+    oSpriteBatch->end();
+}
+
+void drawMiniMap()
+{
+    //--- Update minimap content
+    oRenderer->renderStates.renderTarget = pMiniMap;
+    oRenderer->clear(Color::Black);
+    oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
+    float zoomf = ((float)MINIMAP_SIZE / (float)PLANET_SIZE) / 8;
+    oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
+    oRenderer->renderStates.viewport.push({0, 0, MINIMAP_SIZE, MINIMAP_SIZE});
+    drawMeshIndexed(Matrix::Identity, atmosphereMesh);
+    drawMeshIndexed(Matrix::Identity, planetMesh);
+    oRenderer->renderStates.renderTarget = nullptr;
+    oRenderer->renderStates.viewport.pop();
+
+    //--- Draw it in the top right corner
+    oSpriteBatch->begin();
+    oSpriteBatch->drawRect(pMiniMap, {OScreenWf - MINIMAP_SIZE, 0, MINIMAP_SIZE, MINIMAP_SIZE});
+    oSpriteBatch->end();
 }
 
 void render()
@@ -124,13 +168,15 @@ void render()
         case GAME_STATE_STAND_BY:
         {
             drawWorld();
-            //drawParts(parts, Matrix::Identity);
+            drawParts();
+            drawMiniMap();
             break;
         }
         case GAME_STATE_FLIGHT:
         {
             drawWorld();
-            //drawParts(parts, Matrix::Identity);
+            drawParts();
+            drawMiniMap();
             break;
         }
     }

@@ -373,6 +373,11 @@ namespace onut
 
     Point RendererD3D11::getResolution() const
     {
+        auto pRenderTarget = oRenderer->renderStates.renderTarget.get();
+        if (pRenderTarget)
+        {
+            return pRenderTarget->getSize();
+        }
         return Point(static_cast<int>(m_backBufferDesc.Width), static_cast<int>(m_backBufferDesc.Height));
     }
 

@@ -240,10 +240,10 @@ void drawEditor()
     drawParts(Matrix::Identity, parts);
     drawOnTops();
     oSpriteBatch->end();
-    if (holdingPart != -1)
-    {
-        drawAnchors(partTransform, parts);
-    }
+    //if (holdingPart != -1)
+    //{
+    //    drawAnchors(partTransform, parts);
+    //}
 
     // Draw scrollview
     oSpriteBatch->begin(Matrix::CreateTranslation(0, -scrollPos, 0));

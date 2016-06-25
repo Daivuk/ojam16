@@ -30,7 +30,8 @@ struct Part
 #define PART_TOP_CONE 0
 #define PART_SOLID_ROCKET 1
 #define PART_DECOUPLER 2
-#define PART_COUNT 3
+#define PART_CONE 3
+#define PART_COUNT 4
 
 extern PartDef partDefs[PART_COUNT];
 extern Parts parts;
@@ -41,3 +42,4 @@ void initPartDefs();
 void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent = nullptr);
 void drawAnchors(const Matrix& parentTransform, Parts& parts);
 void drawOnTops();
+Rect vehiculeRect(Part* pPart, const Vector2& parentPos = Vector2::Zero);
