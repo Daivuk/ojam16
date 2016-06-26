@@ -316,11 +316,11 @@ void controlTheFuckingRocket()
     if (!pMainPart) return;
     if (OInputPressed(OKeyLeft))
     {
-        pMainPart->angleVelocity -= (10 + getTotalStability(pMainPart)) / getTotalMass(pMainPart) * ODT;
+        pMainPart->angleVelocity -= (10 + getTotalStability(pMainPart) * 4) / getTotalMass(pMainPart) * ODT;
     }
     else if (OInputPressed(OKeyRight))
     {
-        pMainPart->angleVelocity += (10 + getTotalStability(pMainPart)) / getTotalMass(pMainPart) * ODT;
+        pMainPart->angleVelocity += (10 + getTotalStability(pMainPart) * 4) / getTotalMass(pMainPart) * ODT;
     }
 }
 

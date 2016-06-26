@@ -81,6 +81,14 @@ void initPartDefs()
     partDefs[PART_CONE].price = 50;
     partDefs[PART_CONE].stability = 1.25f;
 
+    partDefs[PART_CONE_WIDE].pTexture = OGetTexture("PART_CONE_WIDE.png");
+    partDefs[PART_CONE_WIDE].hsize = partDefs[PART_CONE_WIDE].pTexture->getSizef() / 128.0f;
+    DEF_ATTACH_POINT(PART_CONE_WIDE, 64, 31);
+    partDefs[PART_CONE_WIDE].weight = .75f;
+    partDefs[PART_CONE_WIDE].name = "Aerodynamic Cone";
+    partDefs[PART_CONE_WIDE].price = 75;
+    partDefs[PART_CONE_WIDE].stability = 1.00f;
+
     partDefs[FIN_SMALL_LEFT].pTexture = OGetTexture("FIN_SMALL_LEFT.png");
     partDefs[FIN_SMALL_LEFT].hsize = partDefs[FIN_SMALL_LEFT].pTexture->getSizef() / 128.0f;
     DEF_ATTACH_POINT(FIN_SMALL_LEFT, 31, 16);
@@ -158,7 +166,7 @@ void initPartDefs()
     DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 2, 32);
     DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 126, 32);
     partDefs[PART_FUEL_WIDE_TALL].weight = 6;
-    partDefs[PART_FUEL_WIDE_TALL].liquidFuel = 20;
+    partDefs[PART_FUEL_WIDE_TALL].liquidFuel = 32;
     partDefs[PART_FUEL_WIDE_TALL].name = "Wide/Tall Liquid Fuel";
     partDefs[PART_FUEL_WIDE_TALL].price = 50;
 
@@ -167,7 +175,7 @@ void initPartDefs()
     DEF_ATTACH_POINT(PART_FUEL_WIDE_SHORT, 64, 2);
     DEF_ATTACH_POINT(PART_FUEL_WIDE_SHORT, 64, 30);
     partDefs[PART_FUEL_WIDE_SHORT].weight = 4;
-    partDefs[PART_FUEL_WIDE_SHORT].liquidFuel = 10;
+    partDefs[PART_FUEL_WIDE_SHORT].liquidFuel = 16;
     partDefs[PART_FUEL_WIDE_SHORT].name = "Wide/Short Liquid Fuel";
     partDefs[PART_FUEL_WIDE_SHORT].price = 50;
 
@@ -176,7 +184,7 @@ void initPartDefs()
     DEF_ATTACH_POINT(PART_FUEL_THIN_SHORT, 32, 2);
     DEF_ATTACH_POINT(PART_FUEL_THIN_SHORT, 32, 30);
     partDefs[PART_FUEL_THIN_SHORT].weight = 2;
-    partDefs[PART_FUEL_THIN_SHORT].liquidFuel = 5;
+    partDefs[PART_FUEL_THIN_SHORT].liquidFuel = 8;
     partDefs[PART_FUEL_THIN_SHORT].name = "Thin/Short Liquid Fuel";
     partDefs[PART_FUEL_THIN_SHORT].price = 50;
 
@@ -187,7 +195,7 @@ void initPartDefs()
     DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 2, 32);
     DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 62, 32);
     partDefs[PART_FUEL_THIN_TALL].weight = 6;
-    partDefs[PART_FUEL_THIN_TALL].liquidFuel = 20;
+    partDefs[PART_FUEL_THIN_TALL].liquidFuel = 16;
     partDefs[PART_FUEL_THIN_TALL].name = "Thin/Tall Liquid Fuel";
     partDefs[PART_FUEL_THIN_TALL].price = 50;
 
