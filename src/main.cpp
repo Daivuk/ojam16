@@ -233,6 +233,7 @@ void activateNextStage()
         {
             pPart->isActive = true;
             if (pPart->type == PART_DECOUPLER ||
+                pPart->type == PART_DECOUPLER_WIDE ||
                 pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||
                 pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT)
             {
@@ -379,8 +380,23 @@ void drawStages()
             auto& partDef = partDefs[pPart->type];
             g_pFont->draw(partDef.name, stageTextPos, OTopLeft, Color(0, 1, 1));
             stageTextPos.y += 16;
-            oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, (pPart->solidFuel + pPart->liquidFuel) / (partDef.solidFuel + partDef.liquidFuel)* 100.0f, 14.f}, Color(1, 1, 0, 1));
-            stageTextPos.y += 16;
+            if (pPart->type == PART_SOLID_ROCKET)
+            {
+                oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, (pPart->solidFuel) / (partDef.solidFuel)* 100.0f, 14.f}, Color(1, 1, 0, 1));
+                stageTextPos.y += 16;
+            }
+            if (pPart->type == PART_LIQUID_ROCKET_WIDE ||
+                pPart->type == PART_LIQUID_ROCKET_THIN)
+            {
+                float liquidFuel = 0;
+                float maxLiquidFuel = 0;
+                getLiquidFuel(pPart, liquidFuel, maxLiquidFuel);
+                if (maxLiquidFuel > 0)
+                {
+                    oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, liquidFuel / maxLiquidFuel * 100.0f, 14.f}, Color(1, 1, 0, 1));
+                    stageTextPos.y += 16;
+                }
+            }
         }
         --stageId;
     }

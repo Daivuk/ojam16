@@ -372,9 +372,12 @@ void drawEditor()
     //}
 
     // Draw scrollview
+    oSpriteBatch->begin();
+    oSpriteBatch->drawRect(nullptr, Rect(0, 0, SCROLL_VIEW_W, OScreenHf * 1000), Color::Black);
+    oSpriteBatch->drawRect(nullptr, Rect(SCROLL_VIEW_W, 0, 2, OScreenHf));
+    oSpriteBatch->end();
     oSpriteBatch->begin(Matrix::CreateTranslation(0, -scrollPos, 0));
     oSpriteBatch->changeBlendMode(OBlendAlpha);
-    oSpriteBatch->drawRect(nullptr, Rect(0, 0, SCROLL_VIEW_W, OScreenHf * 1000), Color::Black);
     float y = 20;
     bool first = true;
     for (auto& partDef : partDefs)
@@ -394,7 +397,6 @@ void drawEditor()
         oSpriteBatch->drawRect(nullptr, Rect(0, y, SCROLL_VIEW_W, 1), Color(1, 1, 1, .3f));
         y += 16.0f;
     }
-    oSpriteBatch->drawRect(nullptr, Rect(SCROLL_VIEW_W, 0, 2, OScreenHf));
     oSpriteBatch->end();
 
     // Draw holding item
