@@ -144,6 +144,9 @@ Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Par
         int index = 0;
         for (auto& attachPoint : partDef.attachPoints)
         {
+            bool leftRight = std::fabsf(attachPoint.x) > std::fabsf(attachPoint.y);
+            if (leftRight && attachPoint.y >= partDef.hsize.y - .1f) leftRight = false;
+            if (leftRight && attachPoint.y <= -partDef.hsize.y + .1f) leftRight = false;
             if (pPart->usedAttachPoints.find(index) != pPart->usedAttachPoints.end())
             {
                 ++index;
@@ -153,7 +156,7 @@ Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Par
             {
                 if ((reference.x < 0 && attachPoint.x < 0) ||
                     (reference.x > 0 && attachPoint.x > 0) ||
-                    std::fabsf(attachPoint.y) > std::fabsf(attachPoint.x))
+                    !leftRight)
                 {
                     ++index;
                     continue;
@@ -163,7 +166,7 @@ Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Par
             {
                 if ((reference.y < 0 && attachPoint.y < 0) ||
                     (reference.y > 0 && attachPoint.y > 0) ||
-                    std::fabsf(attachPoint.x) > std::fabsf(attachPoint.y))
+                    leftRight)
                 {
                     ++index;
                     continue;
