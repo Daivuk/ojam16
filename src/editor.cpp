@@ -213,15 +213,9 @@ void trimStages()
     for (auto it = stages.begin(); it != stages.end();)
     {
         auto& stage = *it;
-        if (stage.empty() && it == stages.begin())
+        if (stage.empty())
         {
             it = stages.erase(it);
-            continue;
-        }
-        if (stage.empty() && it == stages.end() - 1)
-        {
-            it = stages.erase(it);
-            if (it > stages.begin()) --it;
             continue;
         }
         ++it;
@@ -253,6 +247,7 @@ void updateEditor(float dt)
                 pPart->pParent = pTargetPart;
                 pPart->solidFuel = partDef.solidFuel;
                 pPart->liquidFuel = partDef.liquidFuel;
+                pPart->parentAttachPoint = targetAttachPoint;
                 pTargetPart->usedAttachPoints.insert(targetAttachPoint);
                 pTargetPart->children.push_back(pPart);
                 holdingPart = -1;
@@ -350,6 +345,14 @@ void updateEditor(float dt)
             }
             trimStages();
         }
+        else if (OInputJustPressed(OKeyDelete))
+        {
+            if (pHoverPart != pMainPart)
+            {
+                deletePart(pHoverPart);
+                pHoverPart = nullptr;
+            }
+        }
     }
 }
 
@@ -438,4 +441,13 @@ void drawEditor()
         --stageId;
     }
     oSpriteBatch->end();
+
+    // Help tooltips
+    g_pFont->draw("PRESS ^990ESC^999 TO CLEAR", {OScreenWf / 2, OScreenHf - 24}, OBottom);
+    g_pFont->draw("PRESS ^990SPACE BAR^999 TO LAUNCH", {OScreenWf / 2, OScreenHf - 8}, OBottom);
+    if (pHoverPart)
+    {
+        if (pHoverPart != pMainPart) g_pFont->draw("PRESS ^909DELETE^999 REMOVE PART", {OScreenWf / 2, OScreenHf - 24 - 32}, OBottom);
+        g_pFont->draw("PRESS ^909UP/DOWN^999 TO MOVE STAGE", {OScreenWf / 2, OScreenHf - 8 - 32}, OBottom);
+    }
 }

@@ -40,6 +40,7 @@ struct Part
     Vector2 centerOfMass;
     float speed = 0;
     float altitude = 0;
+    int parentAttachPoint = -1;
 };
 
 #define PART_TOP_CONE 0

@@ -217,6 +217,10 @@ void detachFromParent(Part* in_pPart)
 {
     if (in_pPart->pParent)
     {
+        if (in_pPart->parentAttachPoint != -1)
+        {
+            in_pPart->pParent->usedAttachPoints.erase(in_pPart->parentAttachPoint);
+        }
         for (auto it = in_pPart->pParent->children.begin(); it != in_pPart->pParent->children.end(); ++it)
         {
             if (in_pPart == *it)

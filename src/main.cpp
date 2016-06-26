@@ -425,8 +425,6 @@ void render()
         case GAME_STATE_EDITOR:
         {
             drawEditor();
-            g_pFont->draw("PRESS ^990ESC^999 TO CLEAR", {OScreenWf / 2, OScreenHf-24}, OBottom);
-            g_pFont->draw("PRESS ^990SPACE BAR^999 TO LAUNCH", {OScreenWf / 2, OScreenHf-8}, OBottom);
             break;
         }
         case GAME_STATE_STAND_BY:
