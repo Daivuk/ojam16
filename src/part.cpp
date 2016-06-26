@@ -18,6 +18,7 @@ std::vector<std::vector<Part*>> stages;
 OTextureRef pEngineCoverTexture;
 OTextureRef pEngineCoverWideTexture;
 OTextureRef pFireTexture;
+OTextureRef pBlueFireTexture;
 OTextureRef pSmokeTexture;
 float shakeAmount = 0;
 float globalStability = 0;
@@ -30,6 +31,7 @@ void initPartDefs()
     pEngineCoverWideTexture = OGetTexture("PART_ENGINE_COVER_WIDE.png");
     pFireTexture = OGetTexture("PARTICLE_FIRE.png");
     pSmokeTexture = OGetTexture("PARTICLE_SMOKE.png");
+    pBlueFireTexture = OGetTexture("PARTICLE_BLUE_FLAME.png");
 
     partDefs[PART_TOP_CONE].pTexture = OGetTexture("PART_TOP_CONE.png");
     partDefs[PART_TOP_CONE].hsize = partDefs[PART_TOP_CONE].pTexture->getSizef() / 128.0f;
@@ -195,7 +197,7 @@ void initPartDefs()
     partDefs[PART_LIQUID_ROCKET_WIDE].weight = 2;
     partDefs[PART_LIQUID_ROCKET_WIDE].name = "Wide Liquid Fuel Rocket";
     partDefs[PART_LIQUID_ROCKET_WIDE].price = 450;
-    partDefs[PART_LIQUID_ROCKET_WIDE].trust = 150;
+    partDefs[PART_LIQUID_ROCKET_WIDE].trust = 240;
     partDefs[PART_LIQUID_ROCKET_WIDE].isStaged = true;
 
     partDefs[PART_LIQUID_ROCKET_THIN].pTexture = OGetTexture("PART_LIQUID_ROCKET_THIN.png");
@@ -205,7 +207,7 @@ void initPartDefs()
     partDefs[PART_LIQUID_ROCKET_THIN].weight = 2;
     partDefs[PART_LIQUID_ROCKET_THIN].name = "Thin Liquid Fuel Rocket";
     partDefs[PART_LIQUID_ROCKET_THIN].price = 250;
-    partDefs[PART_LIQUID_ROCKET_THIN].trust = 50;
+    partDefs[PART_LIQUID_ROCKET_THIN].trust = 80;
     partDefs[PART_LIQUID_ROCKET_THIN].isStaged = true;
 }
 
@@ -614,7 +616,7 @@ void updatePart(Part* pPart)
                         .5f, 2.0f,
                         2.0f,
                         45.0f,
-                        pFireTexture
+                        pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
                     spawnParticles({
                         worldPos - right * .5f,
@@ -625,7 +627,7 @@ void updatePart(Part* pPart)
                         .5f, 2.0f,
                         2.0f,
                         45.0f,
-                        pFireTexture
+                        pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
                     spawnParticles({
                         worldPos,
@@ -636,7 +638,7 @@ void updatePart(Part* pPart)
                         .5f, 2.0f,
                         2.0f,
                         45.0f,
-                        pFireTexture
+                        pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
                 }
                 break;
@@ -664,7 +666,7 @@ void updatePart(Part* pPart)
                         .5f, 2.0f,
                         2.0f,
                         45.0f,
-                        pFireTexture
+                        pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
                 }
                 break;
