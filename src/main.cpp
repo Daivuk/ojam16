@@ -284,7 +284,7 @@ void activateNextStage()
                     }
                     partDefs[PART_SATELLITE].hsize = partDefs[PART_SATELLITE].pTexture->getSizef() / 128.0f;
                     pPart->type = PART_SATELLITE;
-                    playMusic("SatelliteLoop.wav");
+                    playMusic("SatelliteLoop.mp3");
                 }
                 else
                 {
