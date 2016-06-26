@@ -401,7 +401,6 @@ void updateOrbit()
             }
         }
     }
-    hasStableOrbit = true;
 }
 
 void update()
@@ -639,7 +638,7 @@ void drawHUD()
         }
         oPrimitiveBatch->end();
         oPrimitiveBatch->begin(OPrimitiveTriangleList);
-        Color planetColor(0, .75f, 0, .5f);
+        Color planetColor(0, .5f, 0, .75f);
         planetColor = planetColor.AdjustedSaturation(.5f);
         for (int i = 0; i < 180; i += 15)
         {
