@@ -32,7 +32,7 @@ void initPartDefs()
     pFireTexture = OGetTexture("PARTICLE_FIRE.png");
     pSmokeTexture = OGetTexture("PARTICLE_SMOKE.png");
     pBlueFireTexture = OGetTexture("PARTICLE_BLUE_FLAME.png");
-    pDebrisTexture = OGetTexture("PART_DECOUPLER_HORIZONTAL_LEFT.png");
+    pDebrisTexture = OGetTexture("PARTICLE_DEBRIS.png");
 
     partDefs[PART_TOP_CONE].pTexture = OGetTexture("PART_TOP_CONE.png");
     partDefs[PART_TOP_CONE].hsize = partDefs[PART_TOP_CONE].pTexture->getSizef() / 128.0f;
