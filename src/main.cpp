@@ -365,10 +365,47 @@ void drawMiniMap()
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
 
+    // Draw the orbit
+    if (pMainPart)
+    {
+        // Prepare our data
+    /*    auto vel = pMainPart->vel;
+        auto velSpeed = vel.Length();
+        auto velDir = vel;
+        auto position = pMainPart->position;
+        auto distToCenter = position.Length();
+        auto dirToCenter = position;
+        dirToCenter.Normalize();
+        velDir.Normalize();
+
+        float currentDot = velDir.Dot(dirToCenter);
+        if (currentDot != 1 || currentDot == -1)
+        {
+            // 0 = v + t * G
+            // -v = t * G
+            // -v/G = t
+
+            float timeToHighestPoint = -velSpeed / GRAVITY;
+
+            // Plot the curve
+            oPrimitiveBatch->begin(OPrimitiveLineStrip);
+            oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
+            for (int i = 0; i <= 360; ++i)
+            {
+                float percent = (float)i / 360.0f;
+                float angle = DirectX::XMConvertToRadians((float)i);
+                Vector2 p;
+                //float d = PLANET_SIZE * 2;
+                p.x = std::cosf(angle);
+                p.y = std::sinf(angle);
+                oPrimitiveBatch->draw(p);
+            }
+            oPrimitiveBatch->end();
+        }*/
+    }
+
     oRenderer->renderStates.renderTarget = nullptr;
     oRenderer->renderStates.viewport.pop();
-
-    static Vector2 orbit[60];
 
     //--- Draw it in the top right corner
     oSpriteBatch->begin();

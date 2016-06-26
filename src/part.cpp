@@ -13,8 +13,6 @@ Parts parts;
 Part* pMainPart = nullptr;
 std::vector<std::vector<Part*>> stages;
 
-#define GRAVITY 3.0f
-
 OTextureRef pEngineCoverTexture;
 OTextureRef pEngineCoverWideTexture;
 OTextureRef pFireTexture;

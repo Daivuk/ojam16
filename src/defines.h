@@ -12,6 +12,8 @@
 #define GAME_STATE_STAND_BY 1
 #define GAME_STATE_FLIGHT 2
 
+#define GRAVITY 3.0f
+
 static const Color PLANET_COLOR = Color(0, .5f, 0, 1).AdjustedSaturation(.5f);
 static const Color ATMOSPHERE_BASE_COLOR = Color(0, .75f, 1, 1).AdjustedSaturation(.5f);
 static const Color ATMOSPHERE_COLORS[ATMOSPHERES_COUNT + 1] = {
