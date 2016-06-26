@@ -41,6 +41,8 @@ Vector2 cameraPos;
 OAnimVector2 cameraOffset;
 OAnimVector2 cameraShaking;
 int stageCount;
+bool hasStableOrbit = false;
+OAnimFloat orbitIndicatorAnim;
 
 #define MINIMAP_SIZE 192
 
@@ -91,6 +93,7 @@ void init()
     pWhiteTexture = OTexture::createFromData((uint8_t*)&white, {1, 1}, false);
     pMiniMap = OTexture::createRenderTarget({MINIMAP_SIZE, MINIMAP_SIZE}, false);
     createMeshes();
+    orbitIndicatorAnim.play(.5f, 1.0f, .35f, OTweenEaseBoth, OPingPongLoop);
     
     initPartDefs();
     resetEditor();
@@ -307,9 +310,18 @@ void updateVoices()
     }
 }
 
+float getSpaceDistance()
+{
+    float d1 = ((float)ATMOSPHERES_COUNT);
+    d1 *= d1;
+    d1 = PLANET_SIZE + PLANET_SIZE * ATMOSPHERES_SCALE * d1;
+    return d1;
+}
+
 void updateOrbit()
 {
     plotPoints.clear();
+    hasStableOrbit = false;
     // Draw the orbit
     if (pMainPart)
     {
@@ -349,6 +361,11 @@ void updateOrbit()
             // Get next one!
             if (time < 300.0f)
             {
+                if (plotPoints[0].Length() >= getSpaceDistance() &&
+                    plotPoints[1].Length() >= getSpaceDistance())
+                {
+                    hasStableOrbit = true;
+                }
                 plotPoints.push_back(-plotPoints[0]);
                 plotPoints.push_back(-plotPoints[1]);
             }
@@ -384,6 +401,7 @@ void update()
                 pHoverPart = nullptr;
                 playMusic("OJAM2016_Music_Launch.mp3");
                 plotPoints.clear();
+                hasStableOrbit = false;
             }
             else
             {
@@ -480,6 +498,7 @@ void drawMiniMap()
         oPrimitiveBatch->begin(OPrimitiveLineStrip);
         oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
         Color orbitColor = Color(.75f, .75f, .75f, 1);
+        if (hasStableOrbit) orbitColor *= orbitIndicatorAnim.get();
         for (int i = 0; i < 4; ++i)
         {
             Vector2 p0 = plotPoints[i];
@@ -630,6 +649,12 @@ void render()
     g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 0}, OTop, Color(1, .5f, 0, 1));
     g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 16.0f}, OTop, Color(1, .5f, 0, 1));
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
+
+    if (hasStableOrbit)
+    {
+        g_pFont->draw("STABLE ORBIT", {OScreenWf - MINIMAP_SIZE / 2, 0}, OTop, Color(orbitIndicatorAnim.get()));
+    }
+
     oSpriteBatch->end();
 }
 
