@@ -25,7 +25,7 @@ float globalStability = 0;
 
 void initPartDefs()
 {
-    pEngineCoverTexture = OGetTexture("engineCover.png");
+    pEngineCoverTexture = OGetTexture("PART_ENGINE_COVER.png");
     pFireTexture = OGetTexture("PARTICLE_FIRE.png");
     pSmokeTexture = OGetTexture("PARTICLE_SMOKE.png");
 

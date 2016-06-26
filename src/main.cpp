@@ -293,8 +293,11 @@ void drawMiniMap()
     oRenderer->renderStates.viewport.push({0, 0, MINIMAP_SIZE, MINIMAP_SIZE});
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
+
     oRenderer->renderStates.renderTarget = nullptr;
     oRenderer->renderStates.viewport.pop();
+
+    static Vector2 orbit[60];
 
     //--- Draw it in the top right corner
     oSpriteBatch->begin();
