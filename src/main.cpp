@@ -17,6 +17,8 @@
 #include <onut/ContentManager.h>
 
 #include <vector>
+#include <iomanip>
+#include <sstream>
 
 #include "meshes.h"
 #include "part.h"
@@ -266,6 +268,22 @@ void controlTheFuckingRocket()
     }
 }
 
+int voiceTrigger = 0;
+OMusicRef pCurrentVoice;
+
+void updateVoices()
+{
+    ++voiceTrigger;
+    if (voiceTrigger == 300)
+    {
+        voiceTrigger = 0;
+        std::stringstream ss;
+        ss << "SpySatellite_Voice_Secrets_" << std::setw(2) << std::setfill('0') << ORandInt(1, 66) << ".mp3";
+        pCurrentVoice = OMusic::createFromFile(oContentManager->findResourceFile(ss.str()), nullptr);
+        pCurrentVoice->play();
+    }
+}
+
 void update()
 {
     updateMusic();
@@ -280,6 +298,7 @@ void update()
             else if (OInputJustPressed(OKeySpaceBar) && pMainPart)
             {
                 gameState = GAME_STATE_STAND_BY;
+                voiceTrigger = 200;
                 auto vrect = vehiculeRect(pMainPart);
                 pMainPart->position = {0, -PLANET_SIZE - vrect.w};
                 pMainPart->angle = 0;
@@ -307,6 +326,7 @@ void update()
                 gameState = GAME_STATE_FLIGHT;
             }
             updateCamera();
+            updateVoices();
             break;
         }
         case GAME_STATE_FLIGHT:
@@ -324,6 +344,7 @@ void update()
             }
             toKill.clear();
             updateCamera();
+            updateVoices();
             break;
         }
     }

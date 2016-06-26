@@ -2,6 +2,7 @@
 #include <onut/Input.h>
 #include <onut/Renderer.h>
 #include <onut/SpriteBatch.h>
+#include <onut/Sound.h>
 
 #include "editor.h"
 #include "defines.h"
@@ -257,6 +258,8 @@ void updateEditor(float dt)
                     // Add to a new stage
                     stages.push_back({pPart});
                 }
+
+                //OPlaySound("Build_AddPart01.mp3");
             }
         }
     }
