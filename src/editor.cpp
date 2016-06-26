@@ -109,8 +109,9 @@ int pickScrollView()
     float y = 20;
     bool first = true;
     int index = 0;
-    for (auto& partDef : partDefs)
+    for (auto i = 0; i <PART_COUNT; ++i)
     {
+        auto& partDef = partDefs[i];
         if (first)
         {
             first = false; // Skip the payload
@@ -391,8 +392,9 @@ void drawEditor()
     oSpriteBatch->changeBlendMode(OBlendAlpha);
     float y = 20;
     bool first = true;
-    for (auto& partDef : partDefs)
+    for (auto i = 0; i < PART_COUNT; ++i)
     {
+        auto& partDef = partDefs[i];
         if (first)
         {
             first = false; // Skip the payload

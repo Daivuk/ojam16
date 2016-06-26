@@ -608,7 +608,58 @@ void drawMiniMap()
     //--- Draw it in the top right corner
     oSpriteBatch->begin();
     oSpriteBatch->drawRect(pMiniMap, {OScreenWf - MINIMAP_SIZE, 0, MINIMAP_SIZE, MINIMAP_SIZE});
+    oSpriteBatch->drawRect(nullptr, {OScreenWf - MINIMAP_SIZE, OScreenHf - MINIMAP_SIZE, MINIMAP_SIZE, MINIMAP_SIZE}, Color(0, 0, 0, .5f));
     oSpriteBatch->end();
+}
+
+void drawHUD()
+{
+    if (pMainPart)
+    {
+        Vector2 radarPos = Vector2(OScreenWf - MINIMAP_SIZE / 2, OScreenHf - MINIMAP_SIZE / 2);
+        float radarSize = 60;
+        auto planetVector = pMainPart->position;
+        float shipAngle = std::atan2f(planetVector.x, -planetVector.y);
+        oPrimitiveBatch->begin(OPrimitiveLineStrip);
+        for (int i = 0; i <= 360; i += 15)
+        {
+            float angle = DirectX::XMConvertToRadians((float)i) + shipAngle;
+            oPrimitiveBatch->draw(radarPos + Vector2(std::cosf(angle) * radarSize, std::sinf(angle) * radarSize));
+        }
+        oPrimitiveBatch->end();
+        oPrimitiveBatch->begin(OPrimitiveLineList);
+        for (int i = 0; i <= 360; i += 15)
+        {
+            float angle = DirectX::XMConvertToRadians((float)i) + shipAngle;
+            float dist = 3;
+            if (i % 45) dist = 6;
+            oPrimitiveBatch->draw(radarPos + Vector2(std::cosf(angle) * radarSize, std::sinf(angle) * radarSize));
+            oPrimitiveBatch->draw(radarPos + Vector2(std::cosf(angle) * (radarSize + dist), std::sinf(angle) * (radarSize + dist)));
+        }
+        oPrimitiveBatch->end();
+        oPrimitiveBatch->begin(OPrimitiveTriangleList);
+        Color planetColor(0, .75f, 0, .5f);
+        planetColor = planetColor.AdjustedSaturation(.5f);
+        for (int i = 0; i < 180; i += 15)
+        {
+            float angle1 = DirectX::XMConvertToRadians((float)i) + shipAngle;
+            float angle2 = DirectX::XMConvertToRadians((float)i + 15) + shipAngle;
+            oPrimitiveBatch->draw(radarPos + Vector2(std::cosf(angle1) * (radarSize - 2), std::sinf(angle1) * (radarSize - 2)), planetColor);
+            oPrimitiveBatch->draw(radarPos + Vector2(std::cosf(angle2) * (radarSize - 2), std::sinf(angle2) * (radarSize - 2)), planetColor);
+            oPrimitiveBatch->draw(radarPos, planetColor);
+        }
+        auto arrowColor = Color(1, 0, 1, .75f);
+        oPrimitiveBatch->end();
+        oPrimitiveBatch->begin(OPrimitiveLineList);
+        oPrimitiveBatch->draw(radarPos, arrowColor);
+        auto a90 = DirectX::XM_PI / 2;
+        oPrimitiveBatch->draw(radarPos - Vector2(std::cosf(pMainPart->angle + a90) * radarSize, std::sinf(pMainPart->angle + a90) * radarSize), arrowColor);
+        oPrimitiveBatch->draw(radarPos - Vector2(std::cosf(pMainPart->angle + a90) * radarSize, std::sinf(pMainPart->angle + a90) * radarSize), arrowColor);
+        oPrimitiveBatch->draw(radarPos - Vector2(std::cosf(pMainPart->angle + a90 + .1f) * (radarSize - 10), std::sinf(pMainPart->angle + a90 + .1f) * (radarSize - 10)), arrowColor);
+        oPrimitiveBatch->draw(radarPos - Vector2(std::cosf(pMainPart->angle + a90) * radarSize, std::sinf(pMainPart->angle + a90) * radarSize), arrowColor);
+        oPrimitiveBatch->draw(radarPos - Vector2(std::cosf(pMainPart->angle + a90 - .1f) * (radarSize - 10), std::sinf(pMainPart->angle + a90 - .1f) * (radarSize - 10)), arrowColor);
+        oPrimitiveBatch->end();
+    }
 }
 
 void drawStages()
@@ -673,6 +724,7 @@ void render()
             drawParts();
             drawStages();
             drawMiniMap();
+            drawHUD();
             break;
         }
         case GAME_STATE_FLIGHT:
@@ -685,6 +737,7 @@ void render()
             oSpriteBatch->end();
             drawStages();
             drawMiniMap();
+            drawHUD();
             break;
         }
     }
@@ -696,9 +749,10 @@ void render()
         altitude = pMainPart->altitude;
         speed = pMainPart->speed;
     }
+    Color altColor = Color(1.5, 1, 0, 1);
     oSpriteBatch->drawRect(nullptr, {OScreenCenterXf - 50, 0, 100, 32}, Color(0, 0, 0, .5f));
-    g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 0}, OTop, Color(1, .5f, 0, 1));
-    g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 16.0f}, OTop, Color(1, .5f, 0, 1));
+    g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 4}, OTop, altColor);
+    g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 20.0f}, OTop, altColor);
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
 
     if (hasStableOrbit)
