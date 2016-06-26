@@ -44,6 +44,7 @@ int stageCount;
 bool hasStableOrbit = false;
 OAnimFloat orbitIndicatorAnim;
 float endTimer = 0.0f;
+float scafoldingPos = 0;
 
 #define MINIMAP_SIZE 192
 
@@ -422,6 +423,7 @@ void update()
                 gameState = GAME_STATE_STAND_BY;
                 voiceTrigger = 200;
                 auto vrect = vehiculeRect(pMainPart);
+                scafoldingPos = vrect.z / 2;
                 pMainPart->position = {0, -PLANET_SIZE - vrect.w};
                 pMainPart->angle = 0;
                 vrect = vehiculeRect(pMainPart);
@@ -507,6 +509,22 @@ void drawWorld()
     oRenderer->set2DCameraOffCenter(cameraPos, zoom);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
+
+    oSpriteBatch->begin();
+    oRenderer->set2DCameraOffCenter(cameraPos, zoom);
+    oSpriteBatch->drawRect(OGetTexture("BGstuff.png"),
+                           Rect(
+                           -346.0f / 64.0f,
+                           -PLANET_SIZE - 168.0f / 64.0f,
+                           791.0f / 64.0f,
+                           588.0f / 64.0f));
+    oSpriteBatch->drawRect(OGetTexture("BGscaffold.png"),
+                           Rect(
+                           -51.0f / 64.0f + .5f,// + scafoldingPos,
+                           -PLANET_SIZE - 660.0f / 64.0f,
+                           339.0f / 64.0f,
+                           681.0f / 64.0f));
+    oSpriteBatch->end();
 }
 
 void drawParts()
