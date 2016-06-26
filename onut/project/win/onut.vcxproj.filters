@@ -290,9 +290,6 @@
     <ClInclude Include="..\..\src\ParticleEmitter.h">
       <Filter>services</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\onut\Cloud.h">
-      <Filter>services</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\braincloud\BrainCloudDataStream.h">
       <Filter>thirdparties\braincloud</Filter>
     </ClInclude>
@@ -424,9 +421,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\braincloud\BrainCloudClient.h">
       <Filter>thirdparties\braincloud</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\CloudBrainCloud.h">
-      <Filter>services</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\jsoncpp\json\json.h">
       <Filter>thirdparties\jsoncpp\json</Filter>
@@ -693,12 +687,6 @@
       <Filter>services</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ParticleSystemManager.cpp">
-      <Filter>services</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Cloud.cpp">
-      <Filter>services</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\CloudBrainCloud.cpp">
       <Filter>services</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\VertexBufferD3D11.cpp">

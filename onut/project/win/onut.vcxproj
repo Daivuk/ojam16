@@ -17,7 +17,6 @@
     <ClInclude Include="..\..\include\onut\Anim.h" />
     <ClInclude Include="..\..\include\onut\Async.h" />
     <ClInclude Include="..\..\include\onut\BlendMode.h" />
-    <ClInclude Include="..\..\include\onut\Cloud.h" />
     <ClInclude Include="..\..\include\onut\Crypto.h" />
     <ClInclude Include="..\..\include\onut\Dialogs.h" />
     <ClInclude Include="..\..\include\onut\Dispatcher.h" />
@@ -135,7 +134,6 @@
     <ClInclude Include="..\..\src\braincloud\ServerCall.h" />
     <ClInclude Include="..\..\src\braincloud\ServiceName.h" />
     <ClInclude Include="..\..\src\braincloud\ServiceOperation.h" />
-    <ClInclude Include="..\..\src\CloudBrainCloud.h" />
     <ClInclude Include="..\..\src\dirent\dirent.h" />
     <ClInclude Include="..\..\src\IndexBufferD3D11.h" />
     <ClInclude Include="..\..\src\jsoncpp\json\json-forwards.h" />
@@ -173,8 +171,6 @@
     <ClCompile Include="..\..\src\audio\WaveBank.cpp" />
     <ClCompile Include="..\..\src\audio\WaveBankReader.cpp" />
     <ClCompile Include="..\..\src\audio\WAVFileReader.cpp" />
-    <ClCompile Include="..\..\src\Cloud.cpp" />
-    <ClCompile Include="..\..\src\CloudBrainCloud.cpp" />
     <ClCompile Include="..\..\src\ContentManager.cpp" />
     <ClCompile Include="..\..\src\Crypto.cpp" />
     <ClCompile Include="..\..\src\Dialogs.cpp" />
@@ -295,7 +291,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -303,8 +299,8 @@
       <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;cpprest120d_2_0.lib;brainCloudClientd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86;../../lib/win/Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -320,7 +316,7 @@
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <TreatWarningAsError>false</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -330,8 +326,8 @@
       <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;brainCloudClient.lib;cpprest120_2_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86;../../lib/win/Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Winhttp.lib;Mfplat.lib;dxgi.lib;d3d11.lib;xinput.lib;dinput8.lib;dxguid.lib;msxml6.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x86</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

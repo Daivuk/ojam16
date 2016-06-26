@@ -13,5 +13,6 @@
     <ClInclude Include="..\..\src\part.h" />
     <ClInclude Include="..\..\src\editor.h" />
     <ClInclude Include="..\..\src\particle.h" />
+    <ClInclude Include="..\..\src\secrets.h" />
   </ItemGroup>
 </Project>
