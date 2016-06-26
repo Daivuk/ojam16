@@ -99,6 +99,7 @@ void init()
 }
 
 extern float shakeAmount;
+std::vector<Vector2> plotPoints;
 
 void updateCamera()
 {
@@ -306,6 +307,55 @@ void updateVoices()
     }
 }
 
+void updateOrbit()
+{
+    plotPoints.clear();
+    // Draw the orbit
+    if (pMainPart)
+    {
+        // Prepare our data
+        auto vel = pMainPart->vel;
+        auto velSpeed = vel.Length();
+        auto velDir = vel;
+        auto position = pMainPart->position;
+        auto dirToCenter = position;
+        dirToCenter.Normalize();
+        velDir.Normalize();
+
+        float currentDot = velDir.Dot(dirToCenter);
+        if (currentDot < 1 && currentDot > -1)
+        {
+            float time = 0.0f;
+            float step = .1f;
+            float testDot = currentDot;
+            Vector2 highestPoint = position;
+            while (plotPoints.size() < 2 && time < 300.0f)
+            {
+                while (((currentDot >= 0 && testDot >= 0) ||
+                    (currentDot <= 0 && testDot <= 0)) && time < 300.0f)
+                {
+                    highestPoint += vel;
+                    velDir = vel;
+                    velDir.Normalize();
+                    Vector2 Vg = highestPoint;
+                    Vg.Normalize();
+                    testDot = velDir.Dot(Vg);
+                    vel -= Vg * GRAVITY;
+                    time += step;
+                }
+                plotPoints.push_back(highestPoint);
+                currentDot = testDot;
+            }
+            // Get next one!
+            if (time < 300.0f)
+            {
+                plotPoints.push_back(-plotPoints[0]);
+                plotPoints.push_back(-plotPoints[1]);
+            }
+        }
+    }
+}
+
 void update()
 {
     updateMusic();
@@ -333,6 +383,7 @@ void update()
                 extern Part* pHoverPart;
                 pHoverPart = nullptr;
                 playMusic("OJAM2016_Music_Launch.mp3");
+                plotPoints.clear();
             }
             else
             {
@@ -367,6 +418,7 @@ void update()
             toKill.clear();
             updateCamera();
             updateVoices();
+            updateOrbit();
             break;
         }
     }
@@ -412,37 +464,70 @@ void drawMiniMap()
     if (pMainPart)
     {
         // Prepare our data
-    /*    auto vel = pMainPart->vel;
-        auto velSpeed = vel.Length();
-        auto velDir = vel;
         auto position = pMainPart->position;
-        auto distToCenter = position.Length();
-        auto dirToCenter = position;
-        dirToCenter.Normalize();
-        velDir.Normalize();
+        oPrimitiveBatch->begin(OPrimitiveLineStrip);
+        oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
+        oPrimitiveBatch->draw(position + Vector2(-1000, 0), Color(1, 0, 1));
+        oPrimitiveBatch->draw(position + Vector2(0, 1000), Color(1, 0, 1));
+        oPrimitiveBatch->draw(position + Vector2(1000, 0), Color(1, 0, 1));
+        oPrimitiveBatch->draw(position + Vector2(0, -1000), Color(1, 0, 1));
+        oPrimitiveBatch->draw(position + Vector2(-1000, 0), Color(1, 0, 1));
+        oPrimitiveBatch->end();
+    }
 
-        float currentDot = velDir.Dot(dirToCenter);
-        if (currentDot != 1 || currentDot == -1)
+    if (plotPoints.size() == 4)
+    {
+        oPrimitiveBatch->begin(OPrimitiveLineStrip);
+        oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
+        Color orbitColor = Color(.75f, .75f, .75f, 1);
+        for (int i = 0; i < 4; ++i)
         {
-            // 0 = v + t * G
-            // -v = t * G
-            // -v/G = t
+            Vector2 p0 = plotPoints[i];
+            Vector2 p3 = plotPoints[(i + 1) % 4];
+            Vector2 p1 = p0 + p3 * (2.0f / 3);
+            Vector2 p2 = p3 + p0 * (2.0f / 3);
+            for (int i = 0; i < 100; ++i)
+            {
+                float t = (float)i / 100.0f;
+                float invT = 1 - t;
+                auto pt =
+                    p0 * invT * invT * invT +
+                    3 * p1 * t * invT * invT +
+                    3 * p2 * t * t * invT +
+                    p3 * t * t * t;
+                oPrimitiveBatch->draw(pt, orbitColor);
+            }
+        }
+        oPrimitiveBatch->end();
+        /*
+        oPrimitiveBatch->begin(OPrimitiveLineList);
+        oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
+        for (int i = 0; i < 2; ++i)
+        {
+            Vector2 p0 = plotPoints[i];
+            Vector2 p3 = plotPoints[(i + 2) % 4];
+            oPrimitiveBatch->draw(p0);
+            oPrimitiveBatch->draw(p3);
+        }
+        oPrimitiveBatch->end();
 
-            float timeToHighestPoint = -velSpeed / GRAVITY;
-
-            // Plot the curve
+        int i = 0;
+        for (auto& pt : plotPoints)
+        {
+            Color color;
+            switch (i++)
+            {
+                case 0: color = Color(1, 0, 0); break;
+                case 1: color = Color(0, 1, 0); break;
+                case 2: color = Color(0, 1, 1); break;
+                case 3: color = Color(1, 1, 0); break;
+            }
             oPrimitiveBatch->begin(OPrimitiveLineStrip);
             oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
-            for (int i = 0; i <= 360; ++i)
-            {
-                float percent = (float)i / 360.0f;
-                float angle = DirectX::XMConvertToRadians((float)i);
-                Vector2 p;
-                //float d = PLANET_SIZE * 2;
-                p.x = std::cosf(angle);
-                p.y = std::sinf(angle);
-                oPrimitiveBatch->draw(p);
-            }
+            oPrimitiveBatch->draw(pt + Vector2(-1000, 0), color);
+            oPrimitiveBatch->draw(pt + Vector2(1000, 0), color);
+            oPrimitiveBatch->draw(pt + Vector2(0, -1000), color);
+            oPrimitiveBatch->draw(pt + Vector2(0, 1000), color);
             oPrimitiveBatch->end();
         }*/
     }
