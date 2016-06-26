@@ -401,6 +401,7 @@ void updateOrbit()
             }
         }
     }
+    hasStableOrbit = true;
 }
 
 void update()

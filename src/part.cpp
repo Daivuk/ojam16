@@ -212,6 +212,7 @@ void initPartDefs()
     partDefs[PART_LIQUID_ROCKET_THIN].isStaged = true;
 
     partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
+    partDefs[PART_SATELLITE].weight = 2;
 }
 
 void detachFromParent(Part* in_pPart)
