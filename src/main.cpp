@@ -13,6 +13,8 @@
 #include <onut/Anim.h>
 #include <onut/Input.h>
 #include <onut/Music.h>
+#include <onut/Files.h>
+#include <onut/ContentManager.h>
 
 #include <vector>
 
@@ -40,6 +42,29 @@ float altitude = 0;
 
 #define MINIMAP_SIZE 192
 
+OMusicRef pMusic;
+std::string currentMusic = "";
+
+void updateMusic()
+{
+    if (pMusic)
+    {
+        if (pMusic->isDone())
+        {
+            pMusic = OMusic::createFromFile(oContentManager->findResourceFile(currentMusic), nullptr);
+            pMusic->play();
+        }
+    }
+}
+
+void playMusic(const std::string& filename)
+{
+    if (currentMusic == filename) return;
+    currentMusic = filename;
+    pMusic = OMusic::createFromFile(oContentManager->findResourceFile(currentMusic), nullptr);
+    pMusic->play();
+}
+
 int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_opt_ HINSTANCE hPrevInstance,
                    _In_ LPSTR lpCmdLine,
@@ -65,6 +90,8 @@ void init()
     
     initPartDefs();
     resetEditor();
+
+    playMusic("OJAM2016_Music_Build.mp3");
 }
 
 extern float shakeAmount;
@@ -203,6 +230,7 @@ void controlTheFuckingRocket()
 
 void update()
 {
+    updateMusic();
     switch (gameState)
     {
         case GAME_STATE_EDITOR:
@@ -224,7 +252,7 @@ void update()
                 zoom = std::min(64.0f, zoom);
                 extern Part* pHoverPart;
                 pHoverPart = nullptr;
-                OPlayMusic("OJAM2016_Music_Launch.mp3");
+                playMusic("OJAM2016_Music_Launch.mp3");
             }
             else
             {

@@ -122,7 +122,7 @@ bool Mp3::WaitForCompletion(long msTimeout, long* EvCode)
 	if (ready&&pimex)
 	{
 		HRESULT hr = pimex->WaitForCompletion(msTimeout, EvCode);
-		return *EvCode > 0;
+        return hr == 0x80040227;
 	}
 
 	return false;
