@@ -403,8 +403,11 @@ void updateOrbit()
     }
 }
 
+extern int spawn;
+
 void update()
 {
+    spawn++;
     updateMusic();
     switch (gameState)
     {
@@ -448,6 +451,7 @@ void update()
                 gameState = GAME_STATE_FLIGHT;
                 endTimer = 5.0f;
             }
+            for (auto pPart : parts) updatePart(pPart);
             updateCamera();
             updateVoices();
             if (OInputJustPressed(OKeyEscape))
@@ -717,11 +721,11 @@ void render()
         case GAME_STATE_STAND_BY:
         {
             drawWorld();
+            drawParts();
             oSpriteBatch->begin();
             oRenderer->set2DCameraOffCenter(cameraPos, zoom);
             drawParticles();
             oSpriteBatch->end();
-            drawParts();
             drawStages();
             drawMiniMap();
             drawHUD();

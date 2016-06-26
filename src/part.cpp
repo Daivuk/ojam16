@@ -463,6 +463,7 @@ Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel)
     if (pPart->pParent)
     {
         if (pPart->pParent->type != PART_DECOUPLER &&
+            pPart->pParent->type != PART_DECOUPLER_WIDE &&
             pPart->pParent->type != PART_DECOUPLER_HORIZONTAL_LEFT &&
             pPart->pParent->type != PART_DECOUPLER_HORIZONTAL_RIGHT)
         {
@@ -516,6 +517,8 @@ void explodePart(Part* pPart)
     }
 }
 
+int spawn = 0;
+
 void updatePart(Part* pPart)
 {
     auto& partDef = partDefs[pPart->type];
@@ -541,6 +544,27 @@ void updatePart(Part* pPart)
         // Copy parent's physic
         pPart->vel = pPart->pParent->vel;
         pPart->angleVelocity = pPart->pParent->angleVelocity;
+    }
+
+    extern int gameState;
+    if (gameState == GAME_STATE_STAND_BY &&
+        pPart->type == PART_SOLID_ROCKET &&
+        spawn % 4 == 0)
+    {
+        auto transform = getWorldTransform(pPart);
+        auto worldPos = transform.Translation();
+        worldPos.x -= .15f;
+        spawnParticles({
+            worldPos,
+            Vector2(0, .5f),
+            0,
+            2,
+            Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+            .25f, .5f,
+            ORandFloat(0, 360),
+            30.0f,
+            pSmokeTexture
+        }, 1, 0, 0, 0, 0, Vector2(0, 1));
     }
 
     if (pPart->isActive)
@@ -600,7 +624,7 @@ void updatePart(Part* pPart)
     }
 
     // Finalize update and physic of the main body
-    if (!pPart->pParent)
+    if (!pPart->pParent && gameState != GAME_STATE_STAND_BY)
     {
         auto dirToPlanet = -pPart->position;
         dirToPlanet.Normalize();
