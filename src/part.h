@@ -41,6 +41,7 @@ struct Part
     float speed = 0;
     float altitude = 0;
     int parentAttachPoint = -1;
+    OSoundInstanceRef pSound;
 };
 
 #define PART_TOP_CONE 0

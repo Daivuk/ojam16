@@ -700,6 +700,14 @@ void updatePart(Part* pPart)
                         pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
                 }
+                else
+                {
+                    if (pPart->pSound)
+                    {
+                        pPart->pSound->stop();
+                        pPart->pSound = nullptr;
+                    }
+                }
                 break;
             }
             case PART_LIQUID_ROCKET_THIN:
@@ -727,6 +735,14 @@ void updatePart(Part* pPart)
                         45.0f,
                         pBlueFireTexture
                     }, 1, 10.0f, 360.0f, 0, 0, -forward);
+                }
+                else
+                {
+                    if (pPart->pSound)
+                    {
+                        pPart->pSound->stop();
+                        pPart->pSound = nullptr;
+                    }
                 }
                 break;
             }

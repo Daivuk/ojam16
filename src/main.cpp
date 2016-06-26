@@ -245,6 +245,19 @@ void activateNextStage()
                 OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2);
                 OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2, 0, 0.75f);
             }
+            else if (pPart->type == PART_LIQUID_ROCKET_THIN)
+            {
+                pPart->pSound = OGetSound("LiquidEngineLoop.wav")->createInstance();
+                pPart->pSound->setLoop(true);
+                pPart->pSound->play();
+            }
+            else if (pPart->type == PART_LIQUID_ROCKET_WIDE)
+            {
+                pPart->pSound = OGetSound("LiquidEngineLoop.wav")->createInstance();
+                pPart->pSound->setVolume(3);
+                pPart->pSound->setLoop(true);
+                pPart->pSound->play();
+            }
             if (pPart->type == PART_DECOUPLER ||
                 pPart->type == PART_DECOUPLER_WIDE ||
                 pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||
