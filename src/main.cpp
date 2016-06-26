@@ -69,6 +69,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance,
                    _In_ LPSTR lpCmdLine,
                    _In_ int nShowCmd)
 {
+    oSettings->setIsResizableWindow(true);
     oSettings->setIsFixedStep(true);
     oSettings->setGameName("Ottawa Game Jam 2016");
     oSettings->setResolution({800, 600});
@@ -333,7 +334,7 @@ void drawWorld()
 {
     oRenderer->setupFor2D();
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
-    drawMesh(Matrix::Identity, starMesh);
+    drawMesh(Matrix::CreateScale(OScreenWf / 800.0f), starMesh);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
     oRenderer->set2DCameraOffCenter(cameraPos, zoom);
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);

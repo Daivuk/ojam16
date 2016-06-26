@@ -221,8 +221,8 @@ void createStars()
     for (int i = 0; i < STAR_COUNT; ++i)
     {
         auto& vertex = vertices[i];
-        vertex.position = ORandVector2(OScreenf);
-        vertex.color = Color::White * ORandFloat(.1f, .8f);
+        vertex.position = ORandVector2(Vector2(800, 600));
+        vertex.color = Color::White * ORandFloat(.25f, 1);
     }
     starMesh.pVB = OVertexBuffer::createStatic(vertices, sizeof(vertices));
     starMesh.indexCount = STAR_COUNT;

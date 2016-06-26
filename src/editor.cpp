@@ -360,7 +360,7 @@ void drawEditor()
 {
     oRenderer->setupFor2D();
     oRenderer->renderStates.primitiveMode = OPrimitivePointList;
-    drawMesh(Matrix::Identity, starMesh);
+    drawMesh(Matrix::CreateScale(OScreenWf / 800.0f), starMesh);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
 
     // Draw rocket view
