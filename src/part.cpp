@@ -211,14 +211,40 @@ void initPartDefs()
     partDefs[PART_LIQUID_ROCKET_THIN].isStaged = true;
 }
 
+void deletePart(Part* in_pPart)
+{
+    if (!in_pPart) return;
+    if (pMainPart == in_pPart) pMainPart = nullptr;
+    for (auto it = parts.begin(); it != parts.end(); ++it)
+    {
+        auto pPart = *it;
+        if (pPart == in_pPart)
+        {
+            parts.erase(it);
+            break;
+        }
+    }
+    for (auto& stage : stages)
+    {
+        for (auto it = stage.begin(); it != stage.end(); ++it)
+        {
+            auto pPart = *it;
+            if (pPart == in_pPart)
+            {
+                stage.erase(it);
+                break;
+            }
+        }
+    }
+    delete in_pPart;
+}
+
 void deleteParts(Parts& parts)
 {
-    for (auto& part : parts)
+    while (!parts.empty())
     {
-        deleteParts(part->children);
-        delete part;
+        deletePart(parts.front());
     }
-    parts.clear();
 }
 
 struct OnTopSprite
@@ -362,8 +388,6 @@ struct Force
     Vector2 force;
     Vector2 position;
 };
-float totalMass = 0;
-Vector2 centerOfMass;
 using Forces = std::vector<Force>;
 Forces forces;
 
@@ -423,21 +447,22 @@ Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel)
 void updatePart(Part* pPart)
 {
     auto& partDef = partDefs[pPart->type];
+    auto pTopParent = getTopParent(pPart);
     if (!pPart->pParent)
     {
         forces.clear();
-        totalMass = 0;
-        centerOfMass = Vector2::Zero;
+        pTopParent->totalMass = 0;
+        pTopParent->centerOfMass = Vector2::Zero;
         shakeAmount = 0;
         globalStability = 0;
     }
     else
     {
-        centerOfMass += pPart->position * partDef.weight;
+        pTopParent->centerOfMass += pPart->position * partDef.weight;
     }
 
     globalStability += partDef.stability;
-    totalMass += partDef.weight;
+    pTopParent->totalMass += partDef.weight;
 
     if (pPart->pParent)
     {
@@ -511,9 +536,9 @@ void updatePart(Part* pPart)
         // Apply different forces
         // f = ma
         // a = f / m
-        centerOfMass /= totalMass;
+        pTopParent->centerOfMass /= pTopParent->totalMass;
         auto transformMe = getWorldTransform(pPart);
-        auto worldCenterOfMass = Vector2::Transform(centerOfMass, transformMe);
+        auto worldCenterOfMass = Vector2::Transform(pTopParent->centerOfMass, transformMe);
         auto right = Vector2(transformMe.Right());
         right.Normalize();
         for (int i = 0; i < (int)forces.size(); ++i)
@@ -525,20 +550,20 @@ void updatePart(Part* pPart)
             forceDir.Normalize();
             float directEffect = std::fabsf(dirToCenterOfMass.y);
             float angularEffect = dirToCenterOfMass.Dot(right);
-            pPart->vel += Vector2(force.force / totalMass) * ODT;
-            pPart->angleVelocity -= (angularEffect / totalMass * 100) * ODT;
+            pPart->vel += Vector2(force.force / pTopParent->totalMass) * ODT;
+            pPart->angleVelocity -= (angularEffect / pTopParent->totalMass * 100) * ODT;
         }
 
         float turbulence = 50.0f / std::max(1.0f, (pPart->position.Length() - PLANET_SIZE));
         turbulence *= pPart->vel.Length();
         turbulence = OLerp(turbulence, 0.0f, std::max(0.0f, std::min(1.0f, (pPart->position.Length() - PLANET_SIZE) / 2000)));
-        pPart->angleVelocity += (ORandFloat(-turbulence, turbulence) / totalMass) * ODT;
+        pPart->angleVelocity += (ORandFloat(-turbulence, turbulence) / pTopParent->totalMass) * ODT;
         pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
         if (pPart->angleVelocity > 0)
         {
-            pPart->angleVelocity -= globalStability / totalMass * 4 * ODT;
+            pPart->angleVelocity -= globalStability / pTopParent->totalMass * 4 * ODT;
             if (pPart->angleVelocity < 0)
             {
                 pPart->angleVelocity = 0;
@@ -546,12 +571,14 @@ void updatePart(Part* pPart)
         }
         else if (pPart->angleVelocity < 0)
         {
-            pPart->angleVelocity += globalStability / totalMass * 4 * ODT;
+            pPart->angleVelocity += globalStability / pTopParent->totalMass * 4 * ODT;
             if (pPart->angleVelocity > 0)
             {
                 pPart->angleVelocity = 0;
             }
         }
+        pPart->speed = pPart->vel.Length();
+        pPart->altitude = pPart->position.Length() - PLANET_SIZE;
     }
 
     if (pPart->isActive)

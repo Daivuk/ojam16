@@ -37,8 +37,7 @@ int gameState = GAME_STATE_EDITOR;
 Vector2 cameraPos;
 OAnimVector2 cameraOffset;
 OAnimVector2 cameraShaking;
-float speed = 0;
-float altitude = 0;
+int stageCount;
 
 #define MINIMAP_SIZE 192
 
@@ -98,14 +97,15 @@ extern float shakeAmount;
 
 void updateCamera()
 {
-    auto targetCamera = vehiculeRect(parts[0]).Center() - parts[0]->position;
-    targetCamera = Vector2::Transform(targetCamera, Matrix::CreateRotationZ(parts[0]->angle));
-    targetCamera += parts[0]->position;
+    if (!pMainPart) return;
+    auto targetCamera = vehiculeRect(pMainPart).Center() - pMainPart->position;
+    targetCamera = Vector2::Transform(targetCamera, Matrix::CreateRotationZ(pMainPart->angle));
+    targetCamera += pMainPart->position;
 
     //cameraPos += (targetCamera - cameraPos) * ODT * 5.0f;
     cameraPos = targetCamera + cameraOffset.get() + cameraShaking.get();
 
-    shakeAmount /= ((altitude < 1 ? 1 : altitude) / 100);
+    shakeAmount /= ((pMainPart->altitude < 1 ? 1 : pMainPart->altitude) / 100);
     shakeAmount = std::min(1.0f, shakeAmount);
     if (!cameraShaking.isPlaying())
     {
@@ -223,11 +223,12 @@ void decouple(Part* pPart)
 
 void activateNextStage()
 {
-    auto cameraBefore = vehiculeRect(parts[0]).Center() - parts[0]->position;
-    auto currentState = stages.back();
-    stages.erase(stages.end() - 1);
-    if (!stages.empty())
+    if (!pMainPart) return;
+    auto cameraBefore = vehiculeRect(pMainPart).Center() - pMainPart->position;
+    if (stages.size() > 1)
     {
+        auto currentState = stages.back();
+        stages.erase(stages.end() - 1);
         auto& newStage = stages.back();
         for (auto pPart : newStage)
         {
@@ -240,22 +241,27 @@ void activateNextStage()
                 decouple(pPart);
             }
         }
+        auto cameraAfter = vehiculeRect(pMainPart).Center() - pMainPart->position;
+        auto cameraOffsetf = cameraBefore - cameraAfter;
+        cameraOffsetf = Vector2::Transform(cameraOffsetf, Matrix::CreateRotationZ(pMainPart->angle));
+        cameraOffset.play(cameraOffsetf, Vector2::Zero, 1, OTweenEaseOut);
     }
-    auto cameraAfter = vehiculeRect(parts[0]).Center() - parts[0]->position;
-    auto cameraOffsetf = cameraBefore - cameraAfter;
-    cameraOffsetf = Vector2::Transform(cameraOffsetf, Matrix::CreateRotationZ(parts[0]->angle));
-    cameraOffset.play(cameraOffsetf, Vector2::Zero, 1, OTweenEaseOut);
+    else
+    {
+        // End game?
+    }
 }
 
 void controlTheFuckingRocket()
 {
+    if (!pMainPart) return;
     if (OInputPressed(OKeyLeft))
     {
-        parts[0]->angleVelocity -= (10 + getTotalStability(parts[0])) / getTotalMass(parts[0]) * ODT;
+        pMainPart->angleVelocity -= (10 + getTotalStability(pMainPart)) / getTotalMass(pMainPart) * ODT;
     }
     else if (OInputPressed(OKeyRight))
     {
-        parts[0]->angleVelocity += (10 + getTotalStability(parts[0])) / getTotalMass(parts[0]) * ODT;
+        pMainPart->angleVelocity += (10 + getTotalStability(pMainPart)) / getTotalMass(pMainPart) * ODT;
     }
 }
 
@@ -270,14 +276,15 @@ void update()
             {
                 resetEditor();
             }
-            else if (OInputJustPressed(OKeySpaceBar))
+            else if (OInputJustPressed(OKeySpaceBar) && pMainPart)
             {
                 gameState = GAME_STATE_STAND_BY;
-                auto vrect = vehiculeRect(parts[0]);
-                parts[0]->position = {0, -PLANET_SIZE - vrect.w};
-                parts[0]->angle = 0;
-                vrect = vehiculeRect(parts[0]);
+                auto vrect = vehiculeRect(pMainPart);
+                pMainPart->position = {0, -PLANET_SIZE - vrect.w};
+                pMainPart->angle = 0;
+                vrect = vehiculeRect(pMainPart);
                 cameraPos = vrect.Center();
+                stageCount = (int)stages.size();
                 stages.push_back({}); // Add empty stage at the end so we can start with nothing happening
                 zoom = 256.0f / (vrect.w / 2);
                 zoom = std::min(64.0f, zoom);
@@ -309,8 +316,6 @@ void update()
             }
             controlTheFuckingRocket();
             for (auto pPart : parts) updatePart(pPart);
-            speed = parts[0]->vel.Length();
-            altitude = parts[0]->position.Length() - PLANET_SIZE;
             updateCamera();
             break;
         }
@@ -370,7 +375,7 @@ void drawStages()
     oSpriteBatch->begin();
     oSpriteBatch->drawRect(nullptr, {0, 0, 132.f, OScreenHf}, Color(0, 0, 0, .5f));
     Vector2 stageTextPos(20.0f, 20.0f);
-    int stageId = (int)stages.size();
+    int stageId = stageCount;
     for (auto& stage : stages)
     {
         g_pFont->draw("--- Stage " + std::to_string(stageId) + " ---", stageTextPos, OTopLeft, Color(1, 1, 1));
@@ -406,6 +411,8 @@ void drawStages()
 void render()
 {
     oRenderer->clear({0, 0, 0, 1});
+    oSpriteBatch->changeFiltering(OFilterNearest);
+    oRenderer->renderStates.sampleFiltering = OFilterNearest;
 
     switch (gameState)
     {
@@ -442,6 +449,13 @@ void render()
         }
     }
     oSpriteBatch->begin();
+    static float altitude = 0;
+    static float speed = 0;
+    if (pMainPart)
+    {
+        altitude = pMainPart->altitude;
+        speed = pMainPart->speed;
+    }
     oSpriteBatch->drawRect(nullptr, {OScreenCenterXf - 50, 0, 100, 32}, Color(0, 0, 0, .5f));
     g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 0}, OTop, Color(1, .5f, 0, 1));
     g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 16.0f}, OTop, Color(1, .5f, 0, 1));

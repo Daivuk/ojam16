@@ -36,6 +36,10 @@ struct Part
     bool isActive = false;
     std::set<int> usedAttachPoints;
     Part* pParent = nullptr;
+    float totalMass = 0;
+    Vector2 centerOfMass;
+    float speed = 0;
+    float altitude = 0;
 };
 
 #define PART_TOP_CONE 0
