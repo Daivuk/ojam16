@@ -43,6 +43,7 @@ OAnimVector2 cameraShaking;
 int stageCount;
 bool hasStableOrbit = false;
 OAnimFloat orbitIndicatorAnim;
+float endTimer = 0.0f;
 
 #define MINIMAP_SIZE 192
 
@@ -262,6 +263,35 @@ void activateNextStage()
                 pPart->pSound->setLoop(true);
                 pPart->pSound->play();
             }
+            else if (pPart->type == PART_TOP_CONE)
+            {
+                if (hasStableOrbit)
+                {
+                    switch (ORandInt(0, 3))
+                    {
+                        case 0:
+                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
+                            break;
+                        case 1:
+                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_2.png");
+                            break;
+                        case 2:
+                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_3.png");
+                            break;
+                        case 3:
+                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_4.png");
+                            break;
+                    }
+                    partDefs[PART_SATELLITE].hsize = partDefs[PART_SATELLITE].pTexture->getSizef() / 128.0f;
+                    pPart->type = PART_SATELLITE;
+                    playMusic("SatelliteLoop.wav");
+                }
+                else
+                {
+                    explodePart(pPart);
+                    return;
+                }
+            }
             if (pPart->type == PART_DECOUPLER ||
                 pPart->type == PART_DECOUPLER_WIDE ||
                 pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||
@@ -402,6 +432,7 @@ void update()
                 playMusic("OJAM2016_Music_Launch.mp3");
                 plotPoints.clear();
                 hasStableOrbit = false;
+                shakeAmount = 0;
             }
             else
             {
@@ -415,9 +446,16 @@ void update()
             {
                 activateNextStage();
                 gameState = GAME_STATE_FLIGHT;
+                endTimer = 5.0f;
             }
             updateCamera();
             updateVoices();
+            if (OInputJustPressed(OKeyEscape))
+            {
+                resetEditor();
+                gameState = GAME_STATE_EDITOR;
+                playMusic("OJAM2016_Music_Build.mp3");
+            }
             break;
         }
         case GAME_STATE_FLIGHT:
@@ -427,7 +465,6 @@ void update()
                 activateNextStage();
             }
             controlTheFuckingRocket();
-            toKill.clear();
             for (auto pPart : parts) updatePart(pPart);
             for (auto pToKill : toKill)
             {
@@ -437,6 +474,20 @@ void update()
             updateCamera();
             updateVoices();
             updateOrbit();
+            if (pMainPart)
+            {
+                if (pMainPart->type == PART_SATELLITE) endTimer -= ODT;
+            }
+            else
+            {
+                endTimer -= ODT;
+            }
+            if (endTimer <= 0.f || OInputJustPressed(OKeyEscape))
+            {
+                resetEditor();
+                gameState = GAME_STATE_EDITOR;
+                playMusic("OJAM2016_Music_Build.mp3");
+            }
             break;
         }
     }

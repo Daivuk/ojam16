@@ -9,7 +9,7 @@
 #include "particle.h"
 #include "defines.h"
 
-PartDef partDefs[PART_COUNT];
+PartDef partDefs[PART_COUNT + 1];
 Parts parts;
 Part* pMainPart = nullptr;
 std::vector<std::vector<Part*>> stages;
@@ -210,6 +210,8 @@ void initPartDefs()
     partDefs[PART_LIQUID_ROCKET_THIN].price = 250;
     partDefs[PART_LIQUID_ROCKET_THIN].trust = 80;
     partDefs[PART_LIQUID_ROCKET_THIN].isStaged = true;
+
+    partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
 }
 
 void detachFromParent(Part* in_pPart)
@@ -475,6 +477,43 @@ Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel)
 }
 
 Parts toKill;
+
+void explodePart(Part* pPart)
+{
+    auto altT = getWorldTransform(pPart);
+    auto pTopPart = getTopParent(pPart);
+    if (pMainPart && pMainPart == pTopPart)
+    {
+        OPlaySound("Crash.wav");
+    }
+    toKill.push_back(pPart);
+    auto worldPos = Vector2(altT.Translation());
+    for (auto i = 0; i < 20; ++i)
+    {
+        spawnParticles({
+            worldPos + ORandVector2(Vector2(-1), Vector2(1)),
+            Vector2::Zero,
+            0,
+            1.0f,
+            Color(1, 1, 1, .5f), Color(0, 0, 0, 0),
+            0, 6.0f,
+            0,
+            180.0f,
+            pFireTexture
+        }, 1, 0.0f, 360.0f, 0, 45.0f, Vector2::UnitY);
+        spawnParticles({
+            worldPos,
+            ORandVector2(Vector2(-10), Vector2(10)),
+            0,
+            1.0f,
+            Color(1, 1, 1, 1), Color(1, 1, 1, 1),
+            .5f, .5f,
+            0,
+            180.0f,
+            pDebrisTexture
+        }, 1, 0, 360.0f, 2.0f, 45.0f, Vector2::UnitY);
+    }
+}
 
 void updatePart(Part* pPart)
 {
@@ -753,46 +792,6 @@ void updatePart(Part* pPart)
     auto altitude = Vector2(altT.Translation()).Length();
     if (altitude < PLANET_SIZE)
     {
-        auto pTopPart = getTopParent(pPart);
-        if (pMainPart && pMainPart == pTopPart)
-        {
-            OPlaySound("Crash.wav");
-        }
-        toKill.push_back(pPart);
-        auto worldPos = Vector2(altT.Translation());
-        for (auto i = 0; i < 20; ++i)
-        {
-            spawnParticles({
-                worldPos + ORandVector2(Vector2(-1), Vector2(1)),
-                Vector2::Zero,
-                0,
-                1.0f,
-                Color(1, 1, 1, .5f), Color(0, 0, 0, 0),
-                0, 6.0f,
-                0,
-                180.0f,
-                pFireTexture
-            }, 1, 0.0f, 360.0f, 0, 45.0f, Vector2::UnitY);
-            spawnParticles({
-                worldPos,
-                ORandVector2(Vector2(-10), Vector2(10)),
-                0,
-                1.0f,
-                Color(1, 1, 1, 1), Color(1, 1, 1, 1),
-                .5f, .5f,
-                0,
-                180.0f,
-                pDebrisTexture
-            }, 1, 0, 360.0f, 2.0f, 45.0f, Vector2::UnitY);
-            //Vector2 position;
-            //Vector2 vel;
-            //float life;
-            //float duration;
-            //Color colorFrom, colorTo;
-            //float sizeFrom, sizeTo;
-            //float angle;
-            //float angleVel;
-            //OTextureRef pTexture;
-        }
+        explodePart(pPart);
     }
 }

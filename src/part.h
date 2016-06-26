@@ -63,9 +63,10 @@ struct Part
 #define PART_DECOUPLER_WIDE 16
 #define FIN_MEDIUM_LEFT 17
 #define FIN_MEDIUM_RIGHT 18
+#define PART_SATELLITE 19
 #define PART_COUNT 19
 
-extern PartDef partDefs[PART_COUNT];
+extern PartDef partDefs[PART_COUNT + 1];
 extern Parts parts;
 extern Part* pMainPart;
 extern std::vector<std::vector<Part*>> stages;
@@ -86,3 +87,4 @@ float getTotalMass(Part* pPart);
 float getTotalStability(Part* pPart);
 Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel);
 void deletePart(Part* in_pPart);
+void explodePart(Part* pPart);
