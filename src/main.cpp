@@ -15,6 +15,7 @@
 #include <onut/Music.h>
 #include <onut/Files.h>
 #include <onut/ContentManager.h>
+#include <onut/Sound.h>
 
 #include <vector>
 #include <iomanip>
@@ -63,6 +64,7 @@ void playMusic(const std::string& filename)
     if (currentMusic == filename) return;
     currentMusic = filename;
     pMusic = OMusic::createFromFile(oContentManager->findResourceFile(currentMusic), nullptr);
+    pMusic->setVolume(.75f);
     pMusic->play();
 }
 
@@ -119,6 +121,7 @@ void updateCamera()
 
 void decouple(Part* pPart)
 {
+    OPlayRandomSound({"Decouple01.wav", "Decouple02.wav", "Decouple03.wav", "Decouple04.wav"}, 2);
     int side = 0;
     if (pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT) side = -1;
     if (pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT) side = 1;
@@ -233,9 +236,15 @@ void activateNextStage()
         auto currentState = stages.back();
         stages.erase(stages.end() - 1);
         auto& newStage = stages.back();
+        OPlaySound("NextStageSignal.wav");
         for (auto pPart : newStage)
         {
             pPart->isActive = true;
+            if (pPart->type == PART_SOLID_ROCKET)
+            {
+                OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2);
+                OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2, 0, 0.75f);
+            }
             if (pPart->type == PART_DECOUPLER ||
                 pPart->type == PART_DECOUPLER_WIDE ||
                 pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||

@@ -3,6 +3,7 @@
 #include <onut/Renderer.h>
 #include <onut/Timing.h>
 #include <onut/Random.h>
+#include <onut/Sound.h>
 
 #include "part.h"
 #include "particle.h"
@@ -736,6 +737,11 @@ void updatePart(Part* pPart)
     auto altitude = Vector2(altT.Translation()).Length();
     if (altitude < PLANET_SIZE)
     {
+        auto pTopPart = getTopParent(pPart);
+        if (pMainPart && pMainPart == pTopPart)
+        {
+            OPlaySound("Crash.wav");
+        }
         toKill.push_back(pPart);
         auto worldPos = Vector2(altT.Translation());
         for (auto i = 0; i < 20; ++i)

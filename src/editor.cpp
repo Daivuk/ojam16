@@ -232,6 +232,7 @@ void updateEditor(float dt)
         if (OInputJustPressed(OMouse2))
         {
             holdingPart = -1;
+            OPlaySound("Build_CancelPart.wav");
         }
         else
         {
@@ -259,7 +260,7 @@ void updateEditor(float dt)
                     stages.push_back({pPart});
                 }
 
-                //OPlaySound("Build_AddPart01.mp3");
+                OPlayRandomSound({"Build_AddPart01.wav", "Build_AddPart02.wav", "Build_AddPart03.wav", "Build_AddPart04.wav"});
             }
         }
     }
@@ -270,6 +271,7 @@ void updateEditor(float dt)
             OInputJustPressed(OMouse1))
         {
             holdingPart = mouseHoverPartInScrollView;
+            OPlayRandomSound({"Build_PickupPart01.wav", "Build_PickupPart02.wav", "Build_PickupPart03.wav", "Build_PickupPart04.wav"});
         }
         if (holdingPart == -1)
         {
@@ -305,6 +307,7 @@ void updateEditor(float dt)
                 ++stageIndex;
             }
             ++stageIndex;
+            OPlaySound("Build_ChangeStage.wav");
             if ((int)stages.size() <= stageIndex)
             {
                 stages.push_back({pHoverPart});
@@ -338,6 +341,7 @@ void updateEditor(float dt)
                 ++stageIndex;
             }
             --stageIndex;
+            OPlaySound("Build_ChangeStage.wav");
             if (stageIndex < 0)
             {
                 stages.insert(stages.begin(), {pHoverPart});
@@ -354,6 +358,7 @@ void updateEditor(float dt)
             {
                 deletePart(pHoverPart);
                 pHoverPart = nullptr;
+                OPlaySound("Build_RemovePart.wav");
             }
         }
     }
