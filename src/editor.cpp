@@ -77,14 +77,29 @@ void doPanningZoom()
     }
     if (oInput->getStateValue(OMouseZ) < 0)
     {
-        --editorZoom;
-        if (editorZoom < 0) editorZoom = 0;
+        if (oInput->mousePosf.x < SCROLL_VIEW_W)
+        {
+            scrollPos -= oInput->getStateValue(OMouseZ);
+        }
+        else
+        {
+            --editorZoom;
+            if (editorZoom < 0) editorZoom = 0;
+        }
     }
     if (oInput->getStateValue(OMouseZ) > 0)
     {
-        ++editorZoom;
-        if (editorZoom > 3) editorZoom = 3;
+        if (oInput->mousePosf.x < SCROLL_VIEW_W)
+        {
+            scrollPos -= oInput->getStateValue(OMouseZ);
+        }
+        else
+        {
+            ++editorZoom;
+            if (editorZoom > 3) editorZoom = 3;
+        }
     }
+    if (scrollPos < 0) scrollPos = 0;
 }
 
 int pickScrollView()
@@ -102,7 +117,7 @@ int pickScrollView()
             continue;
         }
         y += 32.0f;
-        Vector2 pos(SCROLL_VIEW_W / 2, y + partDef.hsize.y * 64.f);
+        Vector2 pos(SCROLL_VIEW_W / 2, y + partDef.hsize.y * 64.f - scrollPos);
         Rect rect(pos - Vector2(partDef.pTexture->getSizef() / 2), partDef.pTexture->getSizef());
         if (rect.Contains(oInput->mousePosf))
         {
@@ -359,7 +374,7 @@ void drawEditor()
     // Draw scrollview
     oSpriteBatch->begin(Matrix::CreateTranslation(0, -scrollPos, 0));
     oSpriteBatch->changeBlendMode(OBlendAlpha);
-    oSpriteBatch->drawRect(nullptr, Rect(0, 0, SCROLL_VIEW_W, OScreenHf), Color::Black);
+    oSpriteBatch->drawRect(nullptr, Rect(0, 0, SCROLL_VIEW_W, OScreenHf * 1000), Color::Black);
     float y = 20;
     bool first = true;
     for (auto& partDef : partDefs)

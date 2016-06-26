@@ -44,7 +44,9 @@ struct Part
 #define PART_CONE 3
 #define FIN_SMALL_LEFT 4
 #define FIN_SMALL_RIGHT 5
-#define PART_COUNT 6
+#define PART_DECOUPLER_HORIZONTAL_LEFT 6
+#define PART_DECOUPLER_HORIZONTAL_RIGHT 7
+#define PART_COUNT 8
 
 extern PartDef partDefs[PART_COUNT];
 extern Parts parts;

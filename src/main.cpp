@@ -116,17 +116,37 @@ void updateCamera()
 
 void decouple(Part* pPart)
 {
+    int side = 0;
+    if (pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT) side = -1;
+    if (pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT) side = 1;
     auto mtransform = getWorldTransform(pPart);
+    auto forward = mtransform.Up();
+    auto right = mtransform.Right();
+    right.Normalize();
     for (auto pChild : pPart->children)
     {
         auto transform = getWorldTransform(pChild);
         auto forward = transform.Up();
+        right.Normalize();
         forward *= -1;
         forward.Normalize();
         auto currentDir = pChild->vel;
         currentDir.Normalize();
         pChild->angleVelocity += ORandFloat(-1, 1);
-        pChild->vel -= currentDir;
+        if (side == 0)
+        {
+            pChild->vel -= currentDir;
+        }
+        else if (side == -1)
+        {
+            pChild->vel -= right * 2;
+            pPart->vel -= right;
+        }
+        else if (side == 1)
+        {
+            pChild->vel += right * 2;
+            pPart->vel += right;
+        }
         pChild->angle = std::atan2f(forward.x, -forward.y);
         pChild->position = transform.Translation();
         pChild->pParent = nullptr;
@@ -137,7 +157,18 @@ void decouple(Part* pPart)
         auto currentDir = pPart->pParent->vel;
         currentDir.Normalize();
         auto pTopParent = getTopParent(pPart->pParent);
-        pTopParent->vel += currentDir;
+        if (side == 0)
+        {
+            pTopParent->vel += currentDir;
+        }
+        else if (side == -1)
+        {
+            pTopParent->vel -= right;
+        }
+        else if (side == 1)
+        {
+            pTopParent->vel += right;
+        }
         for (auto it = pPart->pParent->children.begin(); it != pPart->pParent->children.end(); ++it)
         {
             if (*it == pPart)
@@ -147,9 +178,6 @@ void decouple(Part* pPart)
             }
         }
     }
-    auto forward = mtransform.Up();
-    auto right = mtransform.Right();
-    right.Normalize();
     forward *= -1;
     forward.Normalize();
     pPart->angle = std::atan2f(forward.x, -forward.y);
@@ -204,7 +232,9 @@ void activateNextStage()
         for (auto pPart : newStage)
         {
             pPart->isActive = true;
-            if (pPart->type == PART_DECOUPLER)
+            if (pPart->type == PART_DECOUPLER ||
+                pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||
+                pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT)
             {
                 decouple(pPart);
             }
