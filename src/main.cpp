@@ -315,7 +315,13 @@ void update()
                 activateNextStage();
             }
             controlTheFuckingRocket();
+            toKill.clear();
             for (auto pPart : parts) updatePart(pPart);
+            for (auto pToKill : toKill)
+            {
+                deletePart(pToKill);
+            }
+            toKill.clear();
             updateCamera();
             break;
         }

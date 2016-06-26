@@ -68,6 +68,7 @@ extern Parts parts;
 extern Part* pMainPart;
 extern std::vector<std::vector<Part*>> stages;
 extern float globalStability;
+extern Parts toKill;
 
 void deleteParts(Parts& parts);
 void initPartDefs();
@@ -82,3 +83,4 @@ Part* getTopParent(Part* pPart);
 float getTotalMass(Part* pPart);
 float getTotalStability(Part* pPart);
 Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel);
+void deletePart(Part* in_pPart);
