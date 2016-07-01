@@ -1,4 +1,5 @@
 #include <onut/Curve.h>
+#include <onut/CSV.h>
 #include <onut/SpriteBatch.h>
 #include <onut/Renderer.h>
 #include <onut/Timing.h>
@@ -9,7 +10,7 @@
 #include "particle.h"
 #include "defines.h"
 
-PartDef partDefs[PART_COUNT + 1];
+std::vector<PartDef> partDefs;
 Parts parts;
 Part* pMainPart = nullptr;
 std::vector<std::vector<Part*>> stages;
@@ -23,7 +24,24 @@ OTextureRef pSmokeTexture;
 float shakeAmount = 0;
 float globalStability = 0;
 
-#define DEF_ATTACH_POINT(__part__, __x__, __y__) partDefs[__part__].attachPoints.push_back((Vector2(__x__, __y__) - Vector2(partDefs[__part__].pTexture->getSizef() / 2)) / 64)
+std::unordered_map<std::string, int> PART_TYPES_MAP = {
+    {"PAYLOAD", PART_TYPE_PAYLOAD},
+    {"BOOSTER", PART_TYPE_BOOSTER},
+    {"DECOUPLER", PART_TYPE_DECOUPLER},
+    {"AERODYNAMIC", PART_TYPE_AERODYNAMIC},
+    {"FUEL", PART_TYPE_FUEL},
+    {"SATELLITE", PART_TYPE_SATELLITE},
+    {"ENGINE", PART_TYPE_ENGINE},
+};
+
+std::unordered_map<std::string, int> PART_ATTACH_DIR_MAP = {
+    {"up", PART_ATTACH_DIR_UP},
+    {"down", PART_ATTACH_DIR_DOWN},
+    {"left", PART_ATTACH_DIR_LEFT},
+    {"right", PART_ATTACH_DIR_RIGHT},
+};
+
+std::unordered_map<int, int> partDefsMap;
 
 void initPartDefs()
 {
@@ -34,193 +52,57 @@ void initPartDefs()
     pBlueFireTexture = OGetTexture("PARTICLE_BLUE_FLAME.png");
     pDebrisTexture = OGetTexture("PARTICLE_DEBRIS.png");
 
-    partDefs[PART_TOP_CONE].pTexture = OGetTexture("PART_TOP_CONE.png");
-    partDefs[PART_TOP_CONE].hsize = partDefs[PART_TOP_CONE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_TOP_CONE, 32, 62);
-    partDefs[PART_TOP_CONE].weight = 5;
-    partDefs[PART_TOP_CONE].name = "Payload";
-    partDefs[PART_TOP_CONE].price = 0;
-    partDefs[PART_TOP_CONE].isStaged = true;
-
-    partDefs[PART_SOLID_ROCKET].pTexture = OGetTexture("PART_SOLID_ROCKET.png");
-    partDefs[PART_SOLID_ROCKET].hsize = partDefs[PART_SOLID_ROCKET].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 32, 4);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 32, 96);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 2, 32);
-    DEF_ATTACH_POINT(PART_SOLID_ROCKET, 62, 32);
-    partDefs[PART_SOLID_ROCKET].weight = 5;
-    partDefs[PART_SOLID_ROCKET].name = "Solid Fuel Rocket";
-    partDefs[PART_SOLID_ROCKET].price = 200;
-    partDefs[PART_SOLID_ROCKET].solidFuel = 10;
-    partDefs[PART_SOLID_ROCKET].isStaged = true;
-    partDefs[PART_SOLID_ROCKET].trust = 100;
-
-    partDefs[PART_DECOUPLER].pTexture = OGetTexture("PART_DECOUPLER.png");
-    partDefs[PART_DECOUPLER].hsize = partDefs[PART_DECOUPLER].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_DECOUPLER, 32, 3);
-    DEF_ATTACH_POINT(PART_DECOUPLER, 32, 13);
-    partDefs[PART_DECOUPLER].weight = .25f;
-    partDefs[PART_DECOUPLER].name = "Decoupler";
-    partDefs[PART_DECOUPLER].price = 75;
-    partDefs[PART_DECOUPLER].isStaged = true;
-
-    partDefs[PART_DECOUPLER_WIDE].pTexture = OGetTexture("PART_DECOUPLER_WIDE.png");
-    partDefs[PART_DECOUPLER_WIDE].hsize = partDefs[PART_DECOUPLER_WIDE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_DECOUPLER_WIDE, 64, 3);
-    DEF_ATTACH_POINT(PART_DECOUPLER_WIDE, 64, 13);
-    partDefs[PART_DECOUPLER_WIDE].weight = .5f;
-    partDefs[PART_DECOUPLER_WIDE].name = "Decoupler";
-    partDefs[PART_DECOUPLER_WIDE].price = 150;
-    partDefs[PART_DECOUPLER_WIDE].isStaged = true;
-
-    partDefs[PART_CONE].pTexture = OGetTexture("PART_CONE.png");
-    partDefs[PART_CONE].hsize = partDefs[PART_CONE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_CONE, 32, 31);
-    partDefs[PART_CONE].weight = .5f;
-    partDefs[PART_CONE].name = "Aerodynamic Cone";
-    partDefs[PART_CONE].price = 50;
-    partDefs[PART_CONE].stability = 1.25f;
-
-    partDefs[PART_CONE_WIDE].pTexture = OGetTexture("PART_CONE_WIDE.png");
-    partDefs[PART_CONE_WIDE].hsize = partDefs[PART_CONE_WIDE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_CONE_WIDE, 64, 31);
-    partDefs[PART_CONE_WIDE].weight = .75f;
-    partDefs[PART_CONE_WIDE].name = "Aerodynamic Cone";
-    partDefs[PART_CONE_WIDE].price = 75;
-    partDefs[PART_CONE_WIDE].stability = 1.00f;
-
-    partDefs[FIN_SMALL_LEFT].pTexture = OGetTexture("FIN_SMALL_LEFT.png");
-    partDefs[FIN_SMALL_LEFT].hsize = partDefs[FIN_SMALL_LEFT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(FIN_SMALL_LEFT, 31, 16);
-    partDefs[FIN_SMALL_LEFT].weight = .25f;
-    partDefs[FIN_SMALL_LEFT].name = "Small Fin";
-    partDefs[FIN_SMALL_LEFT].price = 50;
-    partDefs[FIN_SMALL_LEFT].stability = 1;
-
-    partDefs[FIN_SMALL_RIGHT].pTexture = OGetTexture("FIN_SMALL_RIGHT.png");
-    partDefs[FIN_SMALL_RIGHT].hsize = partDefs[FIN_SMALL_RIGHT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(FIN_SMALL_RIGHT, 1, 16);
-    partDefs[FIN_SMALL_RIGHT].weight = .25f;
-    partDefs[FIN_SMALL_RIGHT].name = "Small Fin";
-    partDefs[FIN_SMALL_RIGHT].price = 50;
-    partDefs[FIN_SMALL_RIGHT].stability = 1;
-
-    partDefs[FIN_MEDIUM_LEFT].pTexture = OGetTexture("FIN_MEDIUM_LEFT.png");
-    partDefs[FIN_MEDIUM_LEFT].hsize = partDefs[FIN_MEDIUM_LEFT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(FIN_MEDIUM_LEFT, 63, 16);
-    partDefs[FIN_MEDIUM_LEFT].weight = .5f;
-    partDefs[FIN_MEDIUM_LEFT].name = "Medium Fin";
-    partDefs[FIN_MEDIUM_LEFT].price = 100;
-    partDefs[FIN_MEDIUM_LEFT].stability = 1.5;
-
-    partDefs[FIN_MEDIUM_RIGHT].pTexture = OGetTexture("FIN_MEDIUM_RIGHT.png");
-    partDefs[FIN_MEDIUM_RIGHT].hsize = partDefs[FIN_MEDIUM_RIGHT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(FIN_MEDIUM_RIGHT, 1, 16);
-    partDefs[FIN_MEDIUM_RIGHT].weight = .5f;
-    partDefs[FIN_MEDIUM_RIGHT].name = "Medium Fin";
-    partDefs[FIN_MEDIUM_RIGHT].price = 100;
-    partDefs[FIN_MEDIUM_RIGHT].stability = 1.5;
-
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].pTexture = OGetTexture("PART_DECOUPLER_HORIZONTAL_LEFT.png");
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].hsize = partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_DECOUPLER_HORIZONTAL_LEFT, 32 - 3, 16);
-    DEF_ATTACH_POINT(PART_DECOUPLER_HORIZONTAL_LEFT, 32 - 22, 16);
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].weight = .15f;
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].name = "Decoupler";
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].price = 45;
-    partDefs[PART_DECOUPLER_HORIZONTAL_LEFT].isStaged = true;
-
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].pTexture = OGetTexture("PART_DECOUPLER_HORIZONTAL_RIGHT.png");
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].hsize = partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_DECOUPLER_HORIZONTAL_RIGHT, 3, 16);
-    DEF_ATTACH_POINT(PART_DECOUPLER_HORIZONTAL_RIGHT, 22, 16);
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].weight = .15f;
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].name = "Decoupler";
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].price = 45;
-    partDefs[PART_DECOUPLER_HORIZONTAL_RIGHT].isStaged = true;
-
-    partDefs[PART_LARGE_TO_SMALL_JOINER].pTexture = OGetTexture("PART_LARGE_TO_SMALL_JOINER.png");
-    partDefs[PART_LARGE_TO_SMALL_JOINER].hsize = partDefs[PART_LARGE_TO_SMALL_JOINER].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_LARGE_TO_SMALL_JOINER, 64, 1);
-    DEF_ATTACH_POINT(PART_LARGE_TO_SMALL_JOINER, 64, 31);
-    DEF_ATTACH_POINT(PART_LARGE_TO_SMALL_JOINER, 32, 31);
-    DEF_ATTACH_POINT(PART_LARGE_TO_SMALL_JOINER, 96, 31);
-    partDefs[PART_LARGE_TO_SMALL_JOINER].weight = 2;
-    partDefs[PART_LARGE_TO_SMALL_JOINER].name = "Small to Big connector";
-    partDefs[PART_LARGE_TO_SMALL_JOINER].price = 50;
-    
-    partDefs[PART_SMALL_TO_LARGE_JOINER].pTexture = OGetTexture("PART_SMALL_TO_LARGE_JOINER.png");
-    partDefs[PART_SMALL_TO_LARGE_JOINER].hsize = partDefs[PART_SMALL_TO_LARGE_JOINER].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_SMALL_TO_LARGE_JOINER, 64, 1);
-    DEF_ATTACH_POINT(PART_SMALL_TO_LARGE_JOINER, 32, 1);
-    DEF_ATTACH_POINT(PART_SMALL_TO_LARGE_JOINER, 96, 1);
-    DEF_ATTACH_POINT(PART_SMALL_TO_LARGE_JOINER, 64, 31);
-    partDefs[PART_SMALL_TO_LARGE_JOINER].weight = 2;
-    partDefs[PART_SMALL_TO_LARGE_JOINER].name = "Big to Small connector";
-    partDefs[PART_SMALL_TO_LARGE_JOINER].price = 50;
-    
-    partDefs[PART_FUEL_WIDE_TALL].pTexture = OGetTexture("PART_FUEL_WIDE_TALL.png");
-    partDefs[PART_FUEL_WIDE_TALL].hsize = partDefs[PART_FUEL_WIDE_TALL].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 64, 2);
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 64, 62);
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 2, 32);
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_TALL, 126, 32);
-    partDefs[PART_FUEL_WIDE_TALL].weight = 6;
-    partDefs[PART_FUEL_WIDE_TALL].liquidFuel = 32;
-    partDefs[PART_FUEL_WIDE_TALL].name = "Wide/Tall Liquid Fuel";
-    partDefs[PART_FUEL_WIDE_TALL].price = 50;
-
-    partDefs[PART_FUEL_WIDE_SHORT].pTexture = OGetTexture("PART_FUEL_WIDE_SHORT.png");
-    partDefs[PART_FUEL_WIDE_SHORT].hsize = partDefs[PART_FUEL_WIDE_SHORT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_SHORT, 64, 2);
-    DEF_ATTACH_POINT(PART_FUEL_WIDE_SHORT, 64, 30);
-    partDefs[PART_FUEL_WIDE_SHORT].weight = 4;
-    partDefs[PART_FUEL_WIDE_SHORT].liquidFuel = 16;
-    partDefs[PART_FUEL_WIDE_SHORT].name = "Wide/Short Liquid Fuel";
-    partDefs[PART_FUEL_WIDE_SHORT].price = 50;
-
-    partDefs[PART_FUEL_THIN_SHORT].pTexture = OGetTexture("PART_FUEL_THIN_SHORT.png");
-    partDefs[PART_FUEL_THIN_SHORT].hsize = partDefs[PART_FUEL_THIN_SHORT].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_FUEL_THIN_SHORT, 32, 2);
-    DEF_ATTACH_POINT(PART_FUEL_THIN_SHORT, 32, 30);
-    partDefs[PART_FUEL_THIN_SHORT].weight = 2;
-    partDefs[PART_FUEL_THIN_SHORT].liquidFuel = 8;
-    partDefs[PART_FUEL_THIN_SHORT].name = "Thin/Short Liquid Fuel";
-    partDefs[PART_FUEL_THIN_SHORT].price = 50;
-
-    partDefs[PART_FUEL_THIN_TALL].pTexture = OGetTexture("PART_FUEL_THIN_TALL.png");
-    partDefs[PART_FUEL_THIN_TALL].hsize = partDefs[PART_FUEL_THIN_TALL].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 32, 2);
-    DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 32, 62);
-    DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 2, 32);
-    DEF_ATTACH_POINT(PART_FUEL_THIN_TALL, 62, 32);
-    partDefs[PART_FUEL_THIN_TALL].weight = 6;
-    partDefs[PART_FUEL_THIN_TALL].liquidFuel = 16;
-    partDefs[PART_FUEL_THIN_TALL].name = "Thin/Tall Liquid Fuel";
-    partDefs[PART_FUEL_THIN_TALL].price = 50;
-
-    partDefs[PART_LIQUID_ROCKET_WIDE].pTexture = OGetTexture("PART_LIQUID_ROCKET_WIDE.png");
-    partDefs[PART_LIQUID_ROCKET_WIDE].hsize = partDefs[PART_LIQUID_ROCKET_WIDE].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_LIQUID_ROCKET_WIDE, 64, 2);
-    DEF_ATTACH_POINT(PART_LIQUID_ROCKET_WIDE, 64, 32);
-    partDefs[PART_LIQUID_ROCKET_WIDE].weight = 2;
-    partDefs[PART_LIQUID_ROCKET_WIDE].name = "Wide Liquid Fuel Rocket";
-    partDefs[PART_LIQUID_ROCKET_WIDE].price = 450;
-    partDefs[PART_LIQUID_ROCKET_WIDE].trust = 240;
-    partDefs[PART_LIQUID_ROCKET_WIDE].isStaged = true;
-
-    partDefs[PART_LIQUID_ROCKET_THIN].pTexture = OGetTexture("PART_LIQUID_ROCKET_THIN.png");
-    partDefs[PART_LIQUID_ROCKET_THIN].hsize = partDefs[PART_LIQUID_ROCKET_THIN].pTexture->getSizef() / 128.0f;
-    DEF_ATTACH_POINT(PART_LIQUID_ROCKET_THIN, 32, 2);
-    DEF_ATTACH_POINT(PART_LIQUID_ROCKET_THIN, 32, 32);
-    partDefs[PART_LIQUID_ROCKET_THIN].weight = 2;
-    partDefs[PART_LIQUID_ROCKET_THIN].name = "Thin Liquid Fuel Rocket";
-    partDefs[PART_LIQUID_ROCKET_THIN].price = 250;
-    partDefs[PART_LIQUID_ROCKET_THIN].trust = 80;
-    partDefs[PART_LIQUID_ROCKET_THIN].isStaged = true;
-
-    partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
-    partDefs[PART_SATELLITE].weight = 2;
+    auto pPartsCSV = OGetCSV("ojam16 - parts.csv");
+    auto pAttachPointsCSV = OGetCSV("ojam16 - attachPoints.csv");
+    try
+    {
+        auto partCount = pPartsCSV->getRowCount();
+        for (int i = 0; i < partCount; ++i)
+        {
+            PartDef partDef;
+            partDef.pTexture = OGetTexture(pPartsCSV->getValue("image", i));
+            auto& engineCover = pPartsCSV->getValue("engineCover", i);
+            if (!engineCover.empty())
+            {
+                partDef.pEngineCoverTexture = OGetTexture(pPartsCSV->getValue("engineCover", i));
+            }
+            partDef.hsize = partDef.pTexture->getSizef() / 128.0f;
+            partDef.type = PART_TYPES_MAP[pPartsCSV->getValue("type", i)];
+            partDef.weight = pPartsCSV->getFloat("mass", i);
+            partDef.name = pPartsCSV->getValue("name", i);
+            partDef.price = pPartsCSV->getInt("price", i);
+            partDef.isStaged = pPartsCSV->getValue("staged", i) == "TRUE";
+            partDef.trust = pPartsCSV->getFloat("trust", i);
+            partDef.burn = pPartsCSV->getFloat("burn", i);
+            if (partDef.type == PART_TYPE_BOOSTER)
+            {
+                partDef.solidFuel = pPartsCSV->getFloat("fuel", i);
+            }
+            else
+            {
+                partDef.liquidFuel = pPartsCSV->getFloat("fuel", i);
+            }
+            partDef.stability = pPartsCSV->getFloat("stability", i);
+            partDef.id = pPartsCSV->getInt("id", i);
+            partDefsMap[partDef.id] = i;
+            partDefs.push_back(partDef);
+        }
+        auto attachPointCount = pAttachPointsCSV->getRowCount();
+        for (int i = 0; i < attachPointCount; ++i)
+        {
+            auto partId = pAttachPointsCSV->getInt("partId", i);
+            auto& partDef = partDefs[partDefsMap[partId]];
+            auto x = pAttachPointsCSV->getFloat("x", i);
+            auto y = pAttachPointsCSV->getFloat("y", i);
+            partDef.attachPoints.push_back((Vector2(x, y) - Vector2(partDef.pTexture->getSizef() / 2)) / 64);
+            auto& dir = pAttachPointsCSV->getValue("direction", i);
+            partDef.attachPointsDir.push_back(PART_ATTACH_DIR_MAP[dir]);
+        }
+    }
+    catch (...)
+    {
+        assert(false);
+    }
 }
 
 void detachFromParent(Part* in_pPart)
@@ -333,25 +215,15 @@ void drawParts(const Matrix& parentTransform, Parts& parts, Part* pParent)
         {
             hoverSprite = {partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform};
         }
-        if (pPart->type == PART_DECOUPLER)
+        if (partDef.type == PART_TYPE_DECOUPLER)
         {
             if (pParent)
             {
-                if (pParent->type == PART_SOLID_ROCKET ||
-                    pParent->type == PART_LIQUID_ROCKET_THIN)
+                auto& parentPartDef = partDefs[pParent->type];
+                if (parentPartDef.type == PART_TYPE_BOOSTER ||
+                    parentPartDef.type == PART_TYPE_ENGINE)
                 {
-                    onTopSprites.push_back({pEngineCoverTexture, Matrix::CreateScale(1.0f / 64.0f) * Matrix::CreateTranslation(0, -.35f, 0) * transform});
-                }
-            }
-            onTopSprites.push_back({partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform});
-        }
-        else if (pPart->type == PART_DECOUPLER_WIDE)
-        {
-            if (pParent)
-            {
-                if (pParent->type == PART_LIQUID_ROCKET_WIDE)
-                {
-                    onTopSprites.push_back({pEngineCoverWideTexture, Matrix::CreateScale(1.0f / 64.0f) * Matrix::CreateTranslation(0, -.35f, 0) * transform});
+                    onTopSprites.push_back({partDef.pEngineCoverTexture, Matrix::CreateScale(1.0f / 64.0f) * Matrix::CreateTranslation(0, -.35f, 0) * transform});
                 }
             }
             onTopSprites.push_back({partDef.pTexture, Matrix::CreateScale(1.0f / 64.0f) * transform});
@@ -470,10 +342,8 @@ Part* getLiquidFuel(Part* pPart, float& totalLeft, float& maxLiquidFuel)
     maxLiquidFuel += partDefs[pPart->type].liquidFuel;
     if (pPart->pParent)
     {
-        if (pPart->pParent->type != PART_DECOUPLER &&
-            pPart->pParent->type != PART_DECOUPLER_WIDE &&
-            pPart->pParent->type != PART_DECOUPLER_HORIZONTAL_LEFT &&
-            pPart->pParent->type != PART_DECOUPLER_HORIZONTAL_RIGHT)
+        auto& parentPartDef = partDefs[pPart->pParent->type];
+        if (parentPartDef.type != PART_TYPE_DECOUPLER)
         {
             auto pParentIsTank = getLiquidFuel(pPart->pParent, totalLeft, maxLiquidFuel);
             if (pParentIsTank) return pParentIsTank;
@@ -556,7 +426,7 @@ void updatePart(Part* pPart)
 
     extern int gameState;
     if (gameState == GAME_STATE_STAND_BY &&
-        pPart->type == PART_SOLID_ROCKET &&
+        partDef.type == PART_TYPE_BOOSTER &&
         spawn % 4 == 0)
     {
         auto transform = getWorldTransform(pPart);
@@ -577,9 +447,9 @@ void updatePart(Part* pPart)
 
     if (pPart->isActive)
     {
-        switch (pPart->type)
+        switch (partDef.type)
         {
-            case PART_SOLID_ROCKET:
+            case PART_TYPE_BOOSTER:
             {
                 if (pPart->solidFuel > 0)
                 {
@@ -599,8 +469,7 @@ void updatePart(Part* pPart)
                 }
                 break;
             }
-            case PART_LIQUID_ROCKET_THIN:
-            case PART_LIQUID_ROCKET_WIDE:
+            case PART_TYPE_ENGINE:
             {
                 float amount = 0;
                 float maxLiquidFuel = 0;
@@ -608,7 +477,7 @@ void updatePart(Part* pPart)
                 if (pTank && pTank->liquidFuel > 0)
                 {
                     shakeAmount += 1;
-                    pTank->liquidFuel -= ODT;
+                    pTank->liquidFuel -= partDef.burn * ODT;
                     auto transform = getWorldTransform(pPart);
                     auto worldPos = transform.Translation();
                     auto forward = transform.Up();
@@ -661,7 +530,7 @@ void updatePart(Part* pPart)
         float turbulence = 50.0f / std::max(1.0f, (pPart->position.Length() - PLANET_SIZE));
         turbulence *= pPart->vel.Length();
         turbulence = OLerp(turbulence, 0.0f, std::max(0.0f, std::min(1.0f, (pPart->position.Length() - PLANET_SIZE) / 2000)));
-        pPart->angleVelocity += (ORandFloat(-turbulence, turbulence) / pTopParent->totalMass) * ODT;
+        //pPart->angleVelocity += (ORandFloat(-turbulence, turbulence) / pTopParent->totalMass) * ODT;
         pPart->angle += pPart->angleVelocity * ODT;
         pPart->vel += dirToPlanet * GRAVITY * ODT;
         pPart->position += pPart->vel * ODT;
@@ -687,9 +556,9 @@ void updatePart(Part* pPart)
 
     if (pPart->isActive)
     {
-        switch (pPart->type)
+        switch (partDef.type)
         {
-            case PART_SOLID_ROCKET:
+            case PART_TYPE_BOOSTER:
             {
                 if (pPart->solidFuel > 0)
                 {
@@ -724,96 +593,96 @@ void updatePart(Part* pPart)
                 }
                 break;
             }
-            case PART_LIQUID_ROCKET_WIDE:
+            case PART_TYPE_ENGINE:
             {
                 float amount = 0, maxLiquidFuel = 0;
                 auto pTank = getLiquidFuel(pPart, amount, maxLiquidFuel);
-                if (pTank && pTank->liquidFuel > 0)
+                if (partDef.burn > .5f && partDef.burn <= 1.5f)
                 {
-                    auto transform = getWorldTransform(pPart);
-                    auto worldPos = transform.Translation();
-                    auto forward = transform.Up();
-                    auto right = transform.Right();
-                    forward *= -1;
-                    forward.Normalize();
-                    right.Normalize();
-                    worldPos -= forward * .25f;
-                    spawnParticles({
-                        worldPos + right * .5f,
-                        pPart->vel - Vector2(forward * 10.0f),
-                        0,
-                        .25f,
-                        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
-                        .5f, 2.0f,
-                        2.0f,
-                        45.0f,
-                        pBlueFireTexture
-                    }, 1, 10.0f, 360.0f, 0, 0, -forward);
-                    spawnParticles({
-                        worldPos - right * .5f,
-                        pPart->vel - Vector2(forward * 10.0f),
-                        0,
-                        .25f,
-                        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
-                        .5f, 2.0f,
-                        2.0f,
-                        45.0f,
-                        pBlueFireTexture
-                    }, 1, 10.0f, 360.0f, 0, 0, -forward);
-                    spawnParticles({
-                        worldPos,
-                        pPart->vel - Vector2(forward * 10.0f),
-                        0,
-                        .25f,
-                        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
-                        .5f, 2.0f,
-                        2.0f,
-                        45.0f,
-                        pBlueFireTexture
-                    }, 1, 10.0f, 360.0f, 0, 0, -forward);
-                }
-                else
-                {
-                    if (pPart->pSound)
+                    if (pTank && pTank->liquidFuel > 0)
                     {
-                        pPart->pSound->stop();
-                        pPart->pSound = nullptr;
+                        auto transform = getWorldTransform(pPart);
+                        auto worldPos = transform.Translation();
+                        auto forward = transform.Up();
+                        auto right = transform.Right();
+                        forward *= -1;
+                        forward.Normalize();
+                        right.Normalize();
+                        worldPos -= forward * .25f;
+                        spawnParticles({
+                            worldPos,
+                            pPart->vel - Vector2(forward * 10.0f),
+                            0,
+                            .25f,
+                            Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+                            .5f, 2.0f,
+                            2.0f,
+                            45.0f,
+                            pBlueFireTexture
+                        }, 1, 10.0f, 360.0f, 0, 0, -forward);
+                    }
+                    else
+                    {
+                        if (pPart->pSound)
+                        {
+                            pPart->pSound->stop();
+                            pPart->pSound = nullptr;
+                        }
                     }
                 }
-                break;
-            }
-            case PART_LIQUID_ROCKET_THIN:
-            {
-                float amount = 0, maxLiquidFuel = 0;
-                auto pTank = getLiquidFuel(pPart, amount, maxLiquidFuel);
-                if (pTank && pTank->liquidFuel > 0)
+                else if (partDef.burn > 2.5f && partDef.burn <= 3.5f)
                 {
-                    auto transform = getWorldTransform(pPart);
-                    auto worldPos = transform.Translation();
-                    auto forward = transform.Up();
-                    auto right = transform.Right();
-                    forward *= -1;
-                    forward.Normalize();
-                    right.Normalize();
-                    worldPos -= forward * .25f;
-                    spawnParticles({
-                        worldPos,
-                        pPart->vel - Vector2(forward * 10.0f),
-                        0,
-                        .25f,
-                        Color(1, 1, 1, 1), Color(0, 0, 0, 0),
-                        .5f, 2.0f,
-                        2.0f,
-                        45.0f,
-                        pBlueFireTexture
-                    }, 1, 10.0f, 360.0f, 0, 0, -forward);
-                }
-                else
-                {
-                    if (pPart->pSound)
+                    if (pTank && pTank->liquidFuel > 0)
                     {
-                        pPart->pSound->stop();
-                        pPart->pSound = nullptr;
+                        auto transform = getWorldTransform(pPart);
+                        auto worldPos = transform.Translation();
+                        auto forward = transform.Up();
+                        auto right = transform.Right();
+                        forward *= -1;
+                        forward.Normalize();
+                        right.Normalize();
+                        worldPos -= forward * .25f;
+                        spawnParticles({
+                            worldPos + right * .5f,
+                            pPart->vel - Vector2(forward * 10.0f),
+                            0,
+                            .25f,
+                            Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+                            .5f, 2.0f,
+                            2.0f,
+                            45.0f,
+                            pBlueFireTexture
+                        }, 1, 10.0f, 360.0f, 0, 0, -forward);
+                        spawnParticles({
+                            worldPos - right * .5f,
+                            pPart->vel - Vector2(forward * 10.0f),
+                            0,
+                            .25f,
+                            Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+                            .5f, 2.0f,
+                            2.0f,
+                            45.0f,
+                            pBlueFireTexture
+                        }, 1, 10.0f, 360.0f, 0, 0, -forward);
+                        spawnParticles({
+                            worldPos,
+                            pPart->vel - Vector2(forward * 10.0f),
+                            0,
+                            .25f,
+                            Color(1, 1, 1, 1), Color(0, 0, 0, 0),
+                            .5f, 2.0f,
+                            2.0f,
+                            45.0f,
+                            pBlueFireTexture
+                        }, 1, 10.0f, 360.0f, 0, 0, -forward);
+                    }
+                    else
+                    {
+                        if (pPart->pSound)
+                        {
+                            pPart->pSound->stop();
+                            pPart->pSound = nullptr;
+                        }
                     }
                 }
                 break;

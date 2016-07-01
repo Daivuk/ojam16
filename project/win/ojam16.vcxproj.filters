@@ -15,7 +15,4 @@
     <ClInclude Include="..\..\src\particle.h" />
     <ClInclude Include="..\..\src\secrets.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\assets\parts.csv" />
-  </ItemGroup>
 </Project>

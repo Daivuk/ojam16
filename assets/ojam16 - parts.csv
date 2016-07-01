@@ -1,0 +1,22 @@
+id,type,name,desc,price,mass,staged,fuel,trust,burn,stability,spy,image,engineCover
+0,PAYLOAD,Payload,Payload Compartment,0,5,TRUE,,,,,,PART_TOP_CONE.png,
+1,BOOSTER,Booster,Solid Fuel Booster,200,5,TRUE,10,100,1,,,PART_SOLID_ROCKET.png,
+2,DECOUPLER,Decoupler,Decoupler Ring,75,0.25,TRUE,,,,,,PART_DECOUPLER.png,PART_ENGINE_COVER.png
+3,DECOUPLER,Decoupler,Large Decoupler Ring,100,0.35,TRUE,,,,,,PART_DECOUPLER_WIDE.png,PART_ENGINE_COVER_WIDE.png
+4,AERODYNAMIC,Cone,Cone,50,0.5,FALSE,,,,1.25,,PART_CONE.png,
+5,AERODYNAMIC,Cone,Large Cone,75,0.75,FALSE,,,,1,,PART_CONE_WIDE.png,
+6,AERODYNAMIC,Fin,Left Fin,50,0.25,FALSE,,,,1,,FIN_SMALL_LEFT.png,
+7,AERODYNAMIC,Fin,Right Fin,50,0.25,FALSE,,,,1,,FIN_SMALL_RIGHT.png,
+8,AERODYNAMIC,Fin,Large Left Fin,100,0.5,FALSE,,,,1.5,,FIN_MEDIUM_LEFT.png,
+9,AERODYNAMIC,Fin,Large Right Fin,100,0.5,FALSE,,,,1.5,,FIN_MEDIUM_RIGHT.png,
+10,DECOUPLER,Decoupler,Side Decoupler,45,0.15,TRUE,,,,,,PART_DECOUPLER_HORIZONTAL_LEFT.png,
+11,DECOUPLER,Decoupler,Side Decoupler,45,0.15,TRUE,,,,,,PART_DECOUPLER_HORIZONTAL_RIGHT.png,
+12,AERODYNAMIC,Joiner,Large to Small Joiner,50,2,FALSE,,,,,,PART_LARGE_TO_SMALL_JOINER.png,
+13,AERODYNAMIC,Joiner,Small to Large Joiner,50,2,FALSE,,,,,,PART_SMALL_TO_LARGE_JOINER.png,
+14,FUEL,Fuel Tank,Large Liquid Fuel Tank,50,6,FALSE,32,,,,,PART_FUEL_WIDE_TALL.png,
+15,FUEL,Fuel Tank,Large/Short Liquid Fuel Tank,50,4,FALSE,16,,,,,PART_FUEL_WIDE_SHORT.png,
+16,FUEL,Fuel Tank,Short Liquid Fuel Tank,50,2,FALSE,8,,,,,PART_FUEL_THIN_SHORT.png,
+17,FUEL,Fuel Tank,Liquid Fuel Tank,50,6,FALSE,16,,,,,PART_FUEL_THIN_TALL.png,
+18,SATELLITE,Satellite,Spy Satellite,50,2,FALSE,,,,,1,SATELLITE_1.png,
+19,ENGINE,Engine,Liquid Fuel Engine,250,2,TRUE,,80,1,,,PART_LIQUID_ROCKET_THIN.png,
+20,ENGINE,Engine,Large Liquid Fuel Engine,450,2,TRUE,,240,3,,,PART_LIQUID_ROCKET_WIDE.png,

@@ -129,8 +129,8 @@ void decouple(Part* pPart)
 {
     OPlayRandomSound({"Decouple01.wav", "Decouple02.wav", "Decouple03.wav", "Decouple04.wav"}, 2);
     int side = 0;
-    if (pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT) side = -1;
-    if (pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT) side = 1;
+    //if (pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT) side = -1;
+    //if (pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT) side = 1;
     auto mtransform = getWorldTransform(pPart);
     auto forward = mtransform.Up();
     auto right = mtransform.Right();
@@ -245,46 +245,41 @@ void activateNextStage()
         OPlaySound("NextStageSignal.wav");
         for (auto pPart : newStage)
         {
+            auto& partDef = partDefs[pPart->type];
             pPart->isActive = true;
-            if (pPart->type == PART_SOLID_ROCKET)
+            if (partDef.type == PART_TYPE_BOOSTER)
             {
                 OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2);
                 OPlayRandomSound({"RocketFire01.wav", "RocketFire02.wav", "RocketFire03.wav", "RocketFire04.wav"}, 2, 0, 0.75f);
             }
-            else if (pPart->type == PART_LIQUID_ROCKET_THIN)
+            else if (partDef.type == PART_TYPE_ENGINE)
             {
                 pPart->pSound = OGetSound("LiquidEngineLoop.wav")->createInstance();
+                pPart->pSound->setVolume(partDef.burn);
                 pPart->pSound->setLoop(true);
                 pPart->pSound->play();
             }
-            else if (pPart->type == PART_LIQUID_ROCKET_WIDE)
-            {
-                pPart->pSound = OGetSound("LiquidEngineLoop.wav")->createInstance();
-                pPart->pSound->setVolume(3);
-                pPart->pSound->setLoop(true);
-                pPart->pSound->play();
-            }
-            else if (pPart->type == PART_TOP_CONE)
+            else if (partDef.type == PART_TYPE_PAYLOAD)
             {
                 if (hasStableOrbit)
                 {
                     switch (ORandInt(0, 3))
                     {
                         case 0:
-                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
+                            partDefs[PART_TYPE_SATELLITE].pTexture = OGetTexture("SATELLITE_1.png");
                             break;
                         case 1:
-                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_2.png");
+                            partDefs[PART_TYPE_SATELLITE].pTexture = OGetTexture("SATELLITE_2.png");
                             break;
                         case 2:
-                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_3.png");
+                            partDefs[PART_TYPE_SATELLITE].pTexture = OGetTexture("SATELLITE_3.png");
                             break;
                         case 3:
-                            partDefs[PART_SATELLITE].pTexture = OGetTexture("SATELLITE_4.png");
+                            partDefs[PART_TYPE_SATELLITE].pTexture = OGetTexture("SATELLITE_4.png");
                             break;
                     }
-                    partDefs[PART_SATELLITE].hsize = partDefs[PART_SATELLITE].pTexture->getSizef() / 128.0f;
-                    pPart->type = PART_SATELLITE;
+                    partDefs[PART_TYPE_SATELLITE].hsize = partDefs[PART_TYPE_SATELLITE].pTexture->getSizef() / 128.0f;
+                    pPart->type = PART_TYPE_SATELLITE;
                     playMusic("SatelliteLoop.mp3");
                 }
                 else
@@ -293,10 +288,7 @@ void activateNextStage()
                     return;
                 }
             }
-            if (pPart->type == PART_DECOUPLER ||
-                pPart->type == PART_DECOUPLER_WIDE ||
-                pPart->type == PART_DECOUPLER_HORIZONTAL_LEFT ||
-                pPart->type == PART_DECOUPLER_HORIZONTAL_RIGHT)
+            else if (partDef.type == PART_TYPE_DECOUPLER)
             {
                 decouple(pPart);
             }
@@ -482,7 +474,8 @@ void update()
             updateOrbit();
             if (pMainPart)
             {
-                if (pMainPart->type == PART_SATELLITE) endTimer -= ODT;
+                auto& partDef = partDefs[pMainPart->type];
+                if (partDef.type == PART_TYPE_SATELLITE) endTimer -= ODT;
             }
             else
             {
@@ -542,12 +535,12 @@ void drawParts()
 void drawMiniMap()
 {
     //--- Update minimap content
-    oRenderer->renderStates.renderTarget = pMiniMap;
+    oRenderer->renderStates.renderTarget.push(pMiniMap);
+    oRenderer->renderStates.viewport.push({0, 0, MINIMAP_SIZE, MINIMAP_SIZE});
     oRenderer->clear(Color::Black);
     oRenderer->renderStates.primitiveMode = OPrimitiveTriangleList;
     float zoomf = ((float)MINIMAP_SIZE / (float)PLANET_SIZE) / 8;
     oRenderer->set2DCameraOffCenter(Vector2::Zero, zoomf);
-    oRenderer->renderStates.viewport.push({0, 0, MINIMAP_SIZE, MINIMAP_SIZE});
     drawMeshIndexed(Matrix::Identity, atmosphereMesh);
     drawMeshIndexed(Matrix::Identity, planetMesh);
 
@@ -624,7 +617,7 @@ void drawMiniMap()
         }*/
     }
 
-    oRenderer->renderStates.renderTarget = nullptr;
+    oRenderer->renderStates.renderTarget.pop();
     oRenderer->renderStates.viewport.pop();
 
     //--- Draw it in the top right corner
@@ -700,13 +693,12 @@ void drawStages()
             auto& partDef = partDefs[pPart->type];
             g_pFont->draw(partDef.name, stageTextPos, OTopLeft, Color(0, 1, 1));
             stageTextPos.y += 16;
-            if (pPart->type == PART_SOLID_ROCKET)
+            if (partDef.type == PART_TYPE_BOOSTER)
             {
                 oSpriteBatch->drawRect(nullptr, {stageTextPos.x, stageTextPos.y + 1, (pPart->solidFuel) / (partDef.solidFuel)* 100.0f, 14.f}, Color(1, 1, 0, 1));
                 stageTextPos.y += 16;
             }
-            if (pPart->type == PART_LIQUID_ROCKET_WIDE ||
-                pPart->type == PART_LIQUID_ROCKET_THIN)
+            if (partDef.type == PART_TYPE_ENGINE)
             {
                 float liquidFuel = 0;
                 float maxLiquidFuel = 0;

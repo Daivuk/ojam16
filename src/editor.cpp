@@ -51,7 +51,7 @@ void resetEditor()
     deleteParts(parts);
     pMainPart = new Part();
     pMainPart->angle = 0;
-    pMainPart->type = PART_TOP_CONE;
+    pMainPart->type = 0;
     parts.push_back(pMainPart);
 
     stages.clear();
@@ -107,15 +107,11 @@ int pickScrollView()
 {
     int mouseHoverPartInScrollView = -1;
     float y = 20;
-    bool first = true;
-    int index = 0;
-    for (auto i = 0; i <PART_COUNT; ++i)
+    for (auto i = 0; i < (int)partDefs.size(); ++i)
     {
         auto& partDef = partDefs[i];
-        if (first)
+        if (partDef.type == PART_TYPE_PAYLOAD)
         {
-            first = false; // Skip the payload
-            ++index;
             continue;
         }
         y += 32.0f;
@@ -123,18 +119,17 @@ int pickScrollView()
         Rect rect(pos - Vector2(partDef.pTexture->getSizef() / 2), partDef.pTexture->getSizef());
         if (rect.Contains(oInput->mousePosf))
         {
-            mouseHoverPartInScrollView = index;
+            mouseHoverPartInScrollView = i;
             break;
         }
         y += partDef.hsize.y * 64.f * 2;
         y += 16.0f;
         y += 16.0f;
-        ++index;
     }
     return mouseHoverPartInScrollView;
 }
 
-Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Parts& parts, float& closest, int& attachIndex, const Vector2& reference)
+Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Parts& parts, float& closest, int& attachIndex, const Vector2& reference, int dir)
 {
     Part* pRet = nullptr;
     for (auto pPart : parts)
@@ -145,32 +140,18 @@ Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Par
         for (auto& attachPoint : partDef.attachPoints)
         {
             bool leftRight = std::fabsf(attachPoint.x) > std::fabsf(attachPoint.y);
-            if (leftRight && attachPoint.y >= partDef.hsize.y - .1f) leftRight = false;
-            if (leftRight && attachPoint.y <= -partDef.hsize.y + .1f) leftRight = false;
-            if (pPart->usedAttachPoints.find(index) != pPart->usedAttachPoints.end())
+            if ((partDef.attachPointsDir[index] == PART_ATTACH_DIR_UP &&
+                dir != PART_ATTACH_DIR_DOWN) ||
+                (partDef.attachPointsDir[index] == PART_ATTACH_DIR_DOWN &&
+                dir != PART_ATTACH_DIR_UP) ||
+                (partDef.attachPointsDir[index] == PART_ATTACH_DIR_LEFT &&
+                dir != PART_ATTACH_DIR_RIGHT) ||
+                (partDef.attachPointsDir[index] == PART_ATTACH_DIR_RIGHT &&
+                dir != PART_ATTACH_DIR_LEFT) ||
+                pPart->usedAttachPoints.find(index) != pPart->usedAttachPoints.end())
             {
                 ++index;
                 continue;
-            }
-            if (std::fabsf(reference.x) > std::fabsf(reference.y))
-            {
-                if ((reference.x < 0 && attachPoint.x < 0) ||
-                    (reference.x > 0 && attachPoint.x > 0) ||
-                    !leftRight)
-                {
-                    ++index;
-                    continue;
-                }
-            }
-            else
-            {
-                if ((reference.y < 0 && attachPoint.y < 0) ||
-                    (reference.y > 0 && attachPoint.y > 0) ||
-                    leftRight)
-                {
-                    ++index;
-                    continue;
-                }
             }
             auto attachPointTransformed = Vector2::Transform(attachPoint, transform);
             auto dist = Vector2::DistanceSquared(attachPointTransformed, point);
@@ -182,7 +163,7 @@ Part* snapToParts(const Vector2& point, const Matrix& parentTransform, const Par
             }
             ++index;
         }
-        auto pNePart = snapToParts(point, transform, pPart->children, closest, attachIndex, reference);
+        auto pNePart = snapToParts(point, transform, pPart->children, closest, attachIndex, reference, dir);
         if (pNePart) pRet = pNePart;
     }
     return pRet;
@@ -201,7 +182,7 @@ void doSnappingLogic()
     {
         auto point = worldMouse + attachPoint;
         int otherAttachPoint;
-        auto pOtherPart = snapToParts(point, Matrix::Identity, parts, closest, otherAttachPoint, attachPoint);
+        auto pOtherPart = snapToParts(point, Matrix::Identity, parts, closest, otherAttachPoint, attachPoint, partDef.attachPointsDir[index]);
         if (pOtherPart)
         {
             pTargetPart = pOtherPart;
@@ -394,13 +375,11 @@ void drawEditor()
     oSpriteBatch->begin(Matrix::CreateTranslation(0, -scrollPos, 0));
     oSpriteBatch->changeBlendMode(OBlendAlpha);
     float y = 20;
-    bool first = true;
-    for (auto i = 0; i < PART_COUNT; ++i)
+    for (auto i = 0; i < (int)partDefs.size(); ++i)
     {
         auto& partDef = partDefs[i];
-        if (first)
+        if (partDef.type == PART_TYPE_PAYLOAD)
         {
-            first = false; // Skip the payload
             continue;
         }
         g_pFont->draw(partDef.name + "\nPrice: " + std::to_string(partDef.price) + " $",

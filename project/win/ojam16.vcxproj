@@ -98,12 +98,6 @@
     <ClInclude Include="..\..\src\secrets.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\parts.csv">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\onut\project\win\onut.vcxproj">
       <Project>{5a0e49d2-55f1-4ab5-94f6-d19f308ecc46}</Project>
     </ProjectReference>

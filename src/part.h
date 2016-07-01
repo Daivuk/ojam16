@@ -10,16 +10,21 @@ using Parts = std::vector<Part*>;
 struct PartDef
 {
     OTextureRef pTexture;
+    OTextureRef pEngineCoverTexture;
     Vector2 hsize;
     float weight;
     float liquidFuel = 0;
     float solidFuel = 0;
     float stability = 0;
     float trust = 0;
+    float burn = 0;
     bool isStaged = false;
     std::vector<Vector2> attachPoints;
+    std::vector<int> attachPointsDir;
     int price;
     std::string name;
+    int type;
+    int id;
 };
 
 struct Part
@@ -44,35 +49,20 @@ struct Part
     OSoundInstanceRef pSound;
 };
 
-#define PART_TOP_CONE 0
+#define PART_TYPE_PAYLOAD 0
+#define PART_TYPE_BOOSTER 1
+#define PART_TYPE_DECOUPLER 2
+#define PART_TYPE_AERODYNAMIC 3
+#define PART_TYPE_FUEL 4
+#define PART_TYPE_SATELLITE 5
+#define PART_TYPE_ENGINE 6
 
-#define PART_SOLID_ROCKET 1
-#define PART_LIQUID_ROCKET_THIN 2
-#define PART_LIQUID_ROCKET_WIDE 3
+#define PART_ATTACH_DIR_UP 0
+#define PART_ATTACH_DIR_DOWN 1
+#define PART_ATTACH_DIR_LEFT 2
+#define PART_ATTACH_DIR_RIGHT 3
 
-#define PART_FUEL_THIN_SHORT 4
-#define PART_FUEL_THIN_TALL 5
-#define PART_FUEL_WIDE_TALL 6
-#define PART_FUEL_WIDE_SHORT 7
-#define PART_LARGE_TO_SMALL_JOINER 8
-#define PART_SMALL_TO_LARGE_JOINER 9
-
-#define PART_DECOUPLER 10
-#define PART_DECOUPLER_WIDE 11
-#define PART_DECOUPLER_HORIZONTAL_LEFT 12
-#define PART_DECOUPLER_HORIZONTAL_RIGHT 13
-
-#define PART_CONE 14
-#define PART_CONE_WIDE 15
-#define FIN_SMALL_LEFT 16
-#define FIN_SMALL_RIGHT 17
-#define FIN_MEDIUM_LEFT 18
-#define FIN_MEDIUM_RIGHT 19
-
-#define PART_SATELLITE 20
-#define PART_COUNT 20
-
-extern PartDef partDefs[PART_COUNT + 1];
+extern std::vector<PartDef> partDefs;
 extern Parts parts;
 extern Part* pMainPart;
 extern std::vector<std::vector<Part*>> stages;
