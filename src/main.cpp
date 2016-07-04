@@ -768,6 +768,10 @@ void render()
     g_pFont->draw("ALT: " + std::to_string((int)altitude) + " m", {OScreenCenterXf, 4}, OTop, altColor);
     g_pFont->draw("SPD: " + std::to_string((int)speed) + " m/s", {OScreenCenterXf, 20.0f}, OTop, altColor);
     g_pFont->draw("FPS: " + std::to_string(oTiming->getFPS()), Vector2::Zero, OTopLeft, Color(0, .8f, 0, 1));
+    if (pMainPart)
+    {
+        g_pFont->draw("MASS: " + std::to_string((int)(pMainPart->totalMass / 20.0f * 1000.0f)) + " Kg", {OScreenCenterXf - 200, OScreenHf - 4}, OBottom, altColor);
+    }
 
     if (hasStableOrbit)
     {

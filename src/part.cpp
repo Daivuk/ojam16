@@ -322,7 +322,7 @@ float getTotalMass(Part* pPart)
 {
     float ret = 0;
     auto& partDef = partDefs[pPart->type];
-    ret += partDef.weight;
+    ret += partDef.weight + pPart->liquidFuel + pPart->solidFuel;
     for (auto pChild : pPart->children) ret += getTotalMass(pChild);
     return ret;
 }
@@ -411,11 +411,11 @@ void updatePart(Part* pPart)
     }
     else
     {
-        pTopParent->centerOfMass += pPart->position * partDef.weight;
+        pTopParent->centerOfMass += pPart->position * (partDef.weight + pPart->liquidFuel + pPart->solidFuel);
     }
 
     globalStability += partDef.stability;
-    pTopParent->totalMass += partDef.weight;
+    pTopParent->totalMass += (partDef.weight + pPart->liquidFuel + pPart->solidFuel);
 
     if (pPart->pParent)
     {
@@ -454,7 +454,7 @@ void updatePart(Part* pPart)
                 if (pPart->solidFuel > 0)
                 {
                     shakeAmount += 1;
-                    pPart->solidFuel -= ODT;
+                    pPart->solidFuel -= partDef.burn * ODT;
                     auto transform = getWorldTransform(pPart);
                     auto worldPos = transform.Translation();
                     auto forward = transform.Up();

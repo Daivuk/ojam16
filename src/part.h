@@ -12,7 +12,7 @@ struct PartDef
     OTextureRef pTexture;
     OTextureRef pEngineCoverTexture;
     Vector2 hsize;
-    float weight;
+    float weight = 0;
     float liquidFuel = 0;
     float solidFuel = 0;
     float stability = 0;
@@ -21,10 +21,10 @@ struct PartDef
     bool isStaged = false;
     std::vector<Vector2> attachPoints;
     std::vector<int> attachPointsDir;
-    int price;
+    int price = 0;
     std::string name;
-    int type;
-    int id;
+    int type = 0;
+    int id = 0;
 };
 
 struct Part
